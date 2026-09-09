@@ -1,0 +1,252 @@
+[
+  {
+    "id": "conv_001",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport my iphone 12 battery drains in 3 hours after ios 17 update, what happened?"},
+      {"author": "AppleSupport", "text": "We're sorry to hear about the battery drain, @customer. Let's help with that! Please go to Settings > Battery to check your usage. If needed, a Reset All Settings can sometimes improve battery life. DM us your iOS version and device model for more tailored help. ^AK"}
+    ],
+    "intent": "SOFTWARE_BUG",
+    "escalated": false,
+    "resolution": "self_service_guide"
+  },
+  {
+    "id": "conv_002",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport I was charged TWICE for Apple Music this month this is ridiculous"},
+      {"author": "AppleSupport", "text": "We completely understand your frustration, @customer. Duplicate charges need to be resolved ASAP. Please visit reportaproblem.apple.com to report this and request a refund. Our billing team will review it within 48 hours. ^JM"}
+    ],
+    "intent": "BILLING_PAYMENT",
+    "escalated": false,
+    "resolution": "redirect_to_portal"
+  },
+  {
+    "id": "conv_003",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport can't sign in to my apple id says account locked, tried reset password still locked"},
+      {"author": "AppleSupport", "text": "We can help get your Apple ID unlocked, @customer. Please visit iforgot.apple.com to initiate the account recovery process. If you're still unable to access it, our Account Security team is available at 1-800-APL-CARE. ^TL"}
+    ],
+    "intent": "ACCOUNT_ACCESS",
+    "escalated": false,
+    "resolution": "account_recovery_guide"
+  },
+  {
+    "id": "conv_004",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport icloud is completely down right now? can't access any of my documents"},
+      {"author": "AppleSupport", "text": "We are aware of an ongoing issue with iCloud Drive, @customer. Our engineers are actively working on a fix. Please check apple.com/support/systemstatus for live updates. We apologize for the inconvenience. ^RB"}
+    ],
+    "intent": "SERVICE_OUTAGE",
+    "escalated": false,
+    "resolution": "status_page_redirect"
+  },
+  {
+    "id": "conv_005",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport my macbook pro screen cracked after just 6 months, it was in a padded bag, is this covered under warranty?"},
+      {"author": "AppleSupport", "text": "We're sorry to see that happen to your MacBook Pro, @customer. Accidental physical damage is typically not covered under the standard warranty, but AppleCare+ does cover up to 2 incidents of accidental damage. Please visit apple.com/support/repair to see your options and schedule a Genius Bar appointment. ^MK"}
+    ],
+    "intent": "REPAIR_WARRANTY",
+    "escalated": true,
+    "resolution": "genius_bar_referral"
+  },
+  {
+    "id": "conv_006",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport apps keep crashing on my ipad after the latest update, safari crashes every 5 minutes"},
+      {"author": "AppleSupport", "text": "That sounds really frustrating, @customer! Let's troubleshoot the app crashes. First, try force-quitting Safari and relaunching. If the issue persists, go to Settings > General > Transfer or Reset iPad > Reset > Reset All Settings. This won't erase your data. DM us if you need more help! ^LK"}
+    ],
+    "intent": "SOFTWARE_BUG",
+    "escalated": false,
+    "resolution": "self_service_guide"
+  },
+  {
+    "id": "conv_007",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport Is the iPhone 15 Pro compatible with MagSafe accessories from the iPhone 13?"},
+      {"author": "AppleSupport", "text": "Great question, @customer! Yes, all MagSafe accessories are backward compatible with iPhone 15 Pro. You can use any MagSafe charger or case from iPhone 12 or later. Check out our full accessory guide at apple.com/accessories. ^TD"}
+    ],
+    "intent": "GENERAL_INQUIRY",
+    "escalated": false,
+    "resolution": "product_info"
+  },
+  {
+    "id": "conv_008",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport home button on my iphone 8 is completely unresponsive, not even vibrating"},
+      {"author": "AppleSupport", "text": "Sorry to hear that, @customer! Let's see if we can help. First, try restarting your iPhone. If the Home button is still unresponsive, you can use AssistiveTouch as a temporary solution (Settings > Accessibility > Touch > AssistiveTouch). For hardware repair, please visit apple.com/support/repair. ^PL"}
+    ],
+    "intent": "DEVICE_ISSUE",
+    "escalated": true,
+    "resolution": "repair_referral"
+  },
+  {
+    "id": "conv_009",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport I got charged $9.99 for an app I never downloaded, this is fraud!!"},
+      {"author": "AppleSupport", "text": "We take unauthorized charges very seriously, @customer. Please visit reportaproblem.apple.com immediately to dispute this charge. Also, we recommend reviewing your payment methods and enabling purchase notifications in your Apple ID settings to prevent future issues. ^KR"}
+    ],
+    "intent": "BILLING_PAYMENT",
+    "escalated": true,
+    "resolution": "billing_dispute_escalation"
+  },
+  {
+    "id": "conv_010",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport facetime audio quality is terrible since last update, sounds like underwater"},
+      {"author": "AppleSupport", "text": "Sorry about the FaceTime audio quality, @customer! Try this: Settings > General > Transfer or Reset > Reset Network Settings. This resets WiFi/Bluetooth settings and often resolves call quality issues. Make sure you're also on a strong WiFi connection. DM us if it continues! ^AJ"}
+    ],
+    "intent": "SOFTWARE_BUG",
+    "escalated": false,
+    "resolution": "settings_reset_guide"
+  },
+  {
+    "id": "conv_011",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport two-factor authentication keeps sending codes to my old number which I no longer have access to"},
+      {"author": "AppleSupport", "text": "This is a sensitive account security situation, @customer. Please go to iforgot.apple.com and start the account recovery process — it will guide you through identity verification. For urgent help, call 1-800-275-2273 and choose Account Security. ^RL"}
+    ],
+    "intent": "ACCOUNT_ACCESS",
+    "escalated": true,
+    "resolution": "account_security_escalation"
+  },
+  {
+    "id": "conv_012",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport App Store is not loading at all, just spinning, been like this for 2 hours"},
+      {"author": "AppleSupport", "text": "Thanks for letting us know, @customer! Check apple.com/support/systemstatus to see if App Store is experiencing an outage. If it shows all green, try: 1) Sign out of App Store, 2) Restart your device, 3) Sign back in. DM us if the issue persists. ^MC"}
+    ],
+    "intent": "SERVICE_OUTAGE",
+    "escalated": false,
+    "resolution": "status_check_guide"
+  },
+  {
+    "id": "conv_013",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport AppleCare expired last week and my mac just died, is there any way to get repair coverage?"},
+      {"author": "AppleSupport", "text": "We understand this is stressful, @customer. While AppleCare+ coverage has ended, we do offer out-of-warranty repairs. Please visit apple.com/support/repair to get an estimate. In some cases, we may offer a courtesy repair — please call 1-800-APL-CARE to discuss your options. ^PJ"}
+    ],
+    "intent": "REPAIR_WARRANTY",
+    "escalated": true,
+    "resolution": "out_of_warranty_options"
+  },
+  {
+    "id": "conv_014",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport what's the max storage on the new iPhone 15 Pro Max?"},
+      {"author": "AppleSupport", "text": "Great question! The iPhone 15 Pro Max is available in 256GB, 512GB, and 1TB storage options. You can compare all models and configure yours at apple.com/shop. Is there anything else you'd like to know? ^TD"}
+    ],
+    "intent": "GENERAL_INQUIRY",
+    "escalated": false,
+    "resolution": "product_info"
+  },
+  {
+    "id": "conv_015",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport my airpods won't connect to my iphone anymore, tried forgetting and re-pairing still nothing"},
+      {"author": "AppleSupport", "text": "Let's get your AirPods connected again, @customer! Try these steps: 1) Put AirPods in case with lid open, 2) Press and hold the setup button on the back until light flashes white, 3) On iPhone go to Settings > Bluetooth > your AirPods > Connect. DM us if still not working! ^SK"}
+    ],
+    "intent": "DEVICE_ISSUE",
+    "escalated": false,
+    "resolution": "pairing_reset_guide"
+  },
+  {
+    "id": "conv_016",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport I've been billed for Apple TV+ for 8 months but I cancelled the subscription last year, I want a full refund"},
+      {"author": "AppleSupport", "text": "We're sorry to hear about this billing issue, @customer. For a refund on multiple months, please contact our billing team directly at 1-800-APL-CARE. This requires a case review. Please have your Apple ID and billing statements ready. We'll do our best to resolve this for you. ^MN"}
+    ],
+    "intent": "BILLING_PAYMENT",
+    "escalated": true,
+    "resolution": "phone_escalation"
+  },
+  {
+    "id": "conv_017",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport Siri stopped working completely on my iphone 14, says 'Siri is not available' even with internet"},
+      {"author": "AppleSupport", "text": "Let's get Siri working again, @customer! Please try: Settings > Siri & Search > turn off 'Listen for Hey Siri', restart your phone, then turn it back on. Also check: Settings > General > Language & Region matches your country. DM us if you're still seeing the error! ^AP"}
+    ],
+    "intent": "SOFTWARE_BUG",
+    "escalated": false,
+    "resolution": "settings_fix_guide"
+  },
+  {
+    "id": "conv_018",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport Can you use iMessage on Android?"},
+      {"author": "AppleSupport", "text": "iMessage is an Apple-exclusive service and is not available natively on Android devices, @customer. However, you can use apps like Beeper or use Apple ID on a Mac to receive messages from iPhone users. For the best experience, iMessage works seamlessly across all Apple devices. ^TD"}
+    ],
+    "intent": "GENERAL_INQUIRY",
+    "escalated": false,
+    "resolution": "product_info"
+  },
+  {
+    "id": "conv_019",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport icloud drive keeps saying 'not enough storage' even though i have 200gb free, can't sync any files"},
+      {"author": "AppleSupport", "text": "That's unusual, @customer! Let's troubleshoot. Please try: 1) Sign out of iCloud (Settings > [your name] > Sign Out, DO NOT delete data), 2) Restart device, 3) Sign back into iCloud. Also check: System Status at apple.com/support/systemstatus for any iCloud sync issues. ^LM"}
+    ],
+    "intent": "SOFTWARE_BUG",
+    "escalated": false,
+    "resolution": "sign_out_sign_in_guide"
+  },
+  {
+    "id": "conv_020",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport my iphone just stopped turning on after i dropped it, the screen is fine but it won't boot"},
+      {"author": "AppleSupport", "text": "Sorry to hear that, @customer! Let's try a force restart first: For iPhone 8 or later — quickly press Volume Up, Volume Down, then hold Side button until you see the Apple logo. If it still won't turn on, it may need a hardware inspection. Please visit apple.com/support/repair to schedule service. ^MK"}
+    ],
+    "intent": "DEVICE_ISSUE",
+    "escalated": true,
+    "resolution": "repair_referral"
+  },
+  {
+    "id": "conv_021",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport is there an apple store near boston that i can walk into for help?"},
+      {"author": "AppleSupport", "text": "Absolutely, @customer! You can find Apple Store locations near Boston at apple.com/retail/storelist. We'd also recommend scheduling a Genius Bar appointment ahead of time at apple.com/retail/geniusbar to reduce your wait time. ^JR"}
+    ],
+    "intent": "GENERAL_INQUIRY",
+    "escalated": false,
+    "resolution": "store_locator"
+  },
+  {
+    "id": "conv_022",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport my apple watch won't pair with my new iphone 15, stuck on pairing animation for an hour"},
+      {"author": "AppleSupport", "text": "Let's get your Apple Watch paired, @customer! Make sure Bluetooth is on, both devices are close together, and your iPhone has the Watch app. Try unpairing the watch (Watch app > My Watch > i icon > Unpair), then restart both devices and pair fresh. DM us if needed! ^KP"}
+    ],
+    "intent": "DEVICE_ISSUE",
+    "escalated": false,
+    "resolution": "pairing_troubleshoot"
+  },
+  {
+    "id": "conv_023",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport I was told at the genius bar that my repair would take 3 days. It's been 9 days and no update at all. This is unacceptable service."},
+      {"author": "AppleSupport", "text": "We sincerely apologize for the delay and lack of communication, @customer. This is not the experience we want for you. Please DM us your repair case number so we can look into this and escalate to the repair team for an immediate status update. You deserve better. ^AK"}
+    ],
+    "intent": "REPAIR_WARRANTY",
+    "escalated": true,
+    "resolution": "escalation_complaint"
+  },
+  {
+    "id": "conv_024",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport does the iphone 15 come with a charger in the box?"},
+      {"author": "AppleSupport", "text": "The iPhone 15 comes with a USB-C to USB-C cable in the box, @customer. A power adapter is not included. You'll need a USB-C power adapter, which is available at apple.com/shop. The new USB-C port also supports USB 3 speeds on the Pro models. ^TM"}
+    ],
+    "intent": "GENERAL_INQUIRY",
+    "escalated": false,
+    "resolution": "product_info"
+  },
+  {
+    "id": "conv_025",
+    "thread": [
+      {"author": "customer", "text": "@AppleSupport I forgot my iphone passcode and now its disabled, face id wont work either"},
+      {"author": "AppleSupport", "text": "We can help you regain access, @customer! Since Face ID isn't working, you'll need to use Recovery Mode. Connect your iPhone to a Mac/PC, open Finder/iTunes, force restart into recovery mode (Volume Up > Volume Down > hold Side button), then choose Restore. Back up warning: this will erase the device. ^JK"}
+    ],
+    "intent": "ACCOUNT_ACCESS",
+    "escalated": false,
+    "resolution": "recovery_mode_guide"
+  }
+]
