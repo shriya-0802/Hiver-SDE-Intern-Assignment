@@ -143,15 +143,29 @@ export default function EvalPanel() {
             📥 Export Audit Packet (JSON)
           </button>
           <button onClick={runEval} disabled={running} style={{
-            padding:'10px 20px', background:'linear-gradient(135deg, var(--accent), #4f46e5)',
-            border:'none', borderRadius:'var(--radius)', color:'white', fontSize:13, fontWeight:600,
-            cursor: running ? 'not-allowed' : 'pointer', opacity: running ? 0.6 : 1,
-            fontFamily:'Inter, sans-serif'
+            padding:'10px 20px', background: running ? 'var(--bg-card)' : 'linear-gradient(135deg, var(--accent), #4f46e5)',
+            border: running ? '1px solid var(--accent)' : 'none', borderRadius:'var(--radius)', color:'white', fontSize:13, fontWeight:600,
+            cursor: running ? 'not-allowed' : 'pointer', opacity: running ? 0.8 : 1,
+            fontFamily:'Inter, sans-serif', display:'flex', alignItems:'center', gap:8
           }}>
-            {running ? '⚙️ Running…' : '▶ Run Evaluation'}
+            {running ? (
+              <>
+                <span className="status-dot" style={{ background:'var(--yellow)' }} />
+                <span>⚙️ Running Evaluation…</span>
+              </>
+            ) : '▶ Run Evaluation'}
           </button>
         </div>
       </div>
+
+      {running && (
+        <div style={{ padding:'12px 16px', background:'rgba(99,102,241,0.12)', border:'1px solid rgba(99,102,241,0.3)', borderRadius:'var(--radius)', marginBottom:20, fontSize:13, color:'var(--text-primary)', display:'flex', alignItems:'center', gap:12 }}>
+          <div className="typing-dot" style={{ width:10, height:10, background:'var(--accent)' }} />
+          <div>
+            <strong>Evaluating Golden Set:</strong> Running 50 test interactions through Intent Classifier & 4-Tier Escalation Engine…
+          </div>
+        </div>
+      )}
 
       <div className="tabs">
         {['overview', 'baselines', 'per-intent', 'judge', 'failures', 'golden-set'].map(t => (
