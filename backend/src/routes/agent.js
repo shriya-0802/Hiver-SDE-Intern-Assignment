@@ -10,7 +10,7 @@ const { retrieve } = require('../services/vectorStore');
 router.post('/respond', async (req, res) => {
   const startTime = Date.now();
   try {
-    const { message, conversationHistory = [] } = req.body;
+    const { message, conversationHistory = [], policyMode = 'STANDARD' } = req.body;
 
     if (!message || message.trim().length === 0) {
       return res.status(400).json({ error: 'Message is required' });
@@ -28,12 +28,23 @@ router.post('/respond', async (req, res) => {
     const replyData = await generateReply(trimmedMessage, classification.intent, similarConvs);
 
     // Step 4: Determine escalation
-    const escalation = determineEscalation(
+    let escalation = determineEscalation(
       classification.intent,
       classification.confidence,
       trimmedMessage,
       conversationHistory
     );
+
+    // Apply Policy Mode overrides (Unique Simulator Feature)
+    if (policyMode === 'STRICT_SECURITY' && ['ACCOUNT_ACCESS', 'BILLING_PAYMENT'].includes(classification.intent)) {
+      escalation.tier = 'ESCALATE';
+      escalation.label = 'Escalate (Strict Policy)';
+      escalation.reasons.unshift('🔒 Strict Security Policy Mode: Forced human routing for identity & payment protection');
+    } else if (policyMode === 'HIGH_EMPATHY' && escalation.tier === 'AUTO_RESOLVE') {
+      escalation.tier = 'SUGGEST';
+      escalation.label = 'Suggest (High Empathy)';
+      escalation.reasons.unshift('💜 High Empathy Policy Mode: Routing draft to agent for human personal touch');
+    }
 
     // Step 5: LLM Judge (async, non-blocking for speed — returns estimate first)
     let judgeScore = null;

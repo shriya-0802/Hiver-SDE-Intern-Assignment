@@ -131,6 +131,7 @@ export default function ChatDemo() {
   const [loading, setLoading] = useState(false);
   const [lastResult, setLastResult] = useState(null);
   const [apiKeyMissing, setApiKeyMissing] = useState(false);
+  const [policyMode, setPolicyMode] = useState('STANDARD');
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
 
@@ -151,7 +152,11 @@ export default function ChatDemo() {
       const res = await fetch(`${API}/api/agent/respond`, {
         method:'POST',
         headers:{ 'Content-Type':'application/json' },
-        body: JSON.stringify({ message: msg, conversationHistory: messages.slice(-6).map(m => ({ role:m.role, text:m.text })) })
+        body: JSON.stringify({
+          message: msg,
+          policyMode,
+          conversationHistory: messages.slice(-6).map(m => ({ role:m.role, text:m.text }))
+        })
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
@@ -191,6 +196,15 @@ export default function ChatDemo() {
             <div className="agent-desc">Powered by Gemini + RAG · 7 Intent Classes</div>
           </div>
           <div className="agent-live"><div className="status-dot" /> Live</div>
+        </div>
+
+        <div style={{ padding:'8px 16px', background:'rgba(255,255,255,0.03)', borderBottom:'1px solid var(--border)', display:'flex', alignItems:'center', justifyContent:'space-between', fontSize:12 }}>
+          <span style={{ color:'var(--text-muted)', fontWeight:600 }}>🎛️ Policy Simulator:</span>
+          <select value={policyMode} onChange={e => setPolicyMode(e.target.value)} style={{ background:'var(--bg-card)', color:'var(--text-primary)', border:'1px solid var(--border)', borderRadius:6, padding:'3px 8px', fontSize:11, cursor:'pointer' }}>
+            <option value="STANDARD">⚖️ Standard Mode</option>
+            <option value="STRICT_SECURITY">🔒 Strict Security (Force Account/Payment Escalation)</option>
+            <option value="HIGH_EMPATHY">💜 High Empathy (Human VIP Touch)</option>
+          </select>
         </div>
 
         {apiKeyMissing && (
@@ -304,6 +318,32 @@ export default function ChatDemo() {
               <div className="card-title" style={{ marginBottom:12 }}>Escalation Decision</div>
               <EscalationBanner escalation={lastResult.escalation} />
             </div>
+
+            {/* Customer Sentiment & Frustration Gauge (Unique Feature) */}
+            {lastResult.escalation?.sentimentPulse && (
+              <div className="card fade-in">
+                <div className="card-header" style={{ marginBottom:8 }}>
+                  <div className="card-title">Customer Sentiment Pulse</div>
+                  <span style={{ fontSize:12, fontWeight:700, padding:'2px 8px', borderRadius:4, background:'rgba(255,255,255,0.05)' }}>
+                    {lastResult.escalation.sentimentPulse.emoji} {lastResult.escalation.sentimentPulse.level.replace(/_/g,' ')}
+                  </span>
+                </div>
+                <div>
+                  <div style={{ display:'flex', justifyContent:'space-between', fontSize:11, color:'var(--text-secondary)', marginBottom:4 }}>
+                    <span>Frustration Gauge</span>
+                    <span style={{ fontWeight:700, color: lastResult.escalation.sentimentPulse.scorePct >= 60 ? 'var(--red)' : lastResult.escalation.sentimentPulse.scorePct >= 30 ? 'var(--yellow)' : 'var(--green)' }}>
+                      {lastResult.escalation.sentimentPulse.scorePct}%
+                    </span>
+                  </div>
+                  <div className="confidence-bar-track">
+                    <div className="confidence-bar-fill" style={{
+                      width:`${lastResult.escalation.sentimentPulse.scorePct}%`,
+                      background: lastResult.escalation.sentimentPulse.scorePct >= 60 ? 'var(--red)' : lastResult.escalation.sentimentPulse.scorePct >= 30 ? 'var(--yellow)' : 'var(--green)'
+                    }} />
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* RAG */}
             <div className="card fade-in">

@@ -112,6 +112,17 @@ export default function EvalPanel() {
     { name: 'Our System', accuracy: Math.round((baselines.ourSystem?.accuracy || 0.79) * 100), color: '#6366f1' },
   ];
 
+  const exportAudit = () => {
+    if (!results) return;
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(results, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `Apple_AI_Support_Audit_Report_${new Date().toISOString().slice(0,10)}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+  };
+
   return (
     <div style={{ flex:1, overflow:'auto' }}>
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:24 }}>
@@ -123,14 +134,23 @@ export default function EvalPanel() {
             {results?.summary?.totalEvaluated || 150} examples · Golden Set · LLM-as-Judge · Human Agreement
           </div>
         </div>
-        <button onClick={runEval} disabled={running} style={{
-          padding:'10px 20px', background:'linear-gradient(135deg, var(--accent), #4f46e5)',
-          border:'none', borderRadius:'var(--radius)', color:'white', fontSize:13, fontWeight:600,
-          cursor: running ? 'not-allowed' : 'pointer', opacity: running ? 0.6 : 1,
-          fontFamily:'Inter, sans-serif'
-        }}>
-          {running ? '⚙️ Running…' : '▶ Run Evaluation'}
-        </button>
+        <div style={{ display:'flex', gap:10 }}>
+          <button onClick={exportAudit} disabled={!results} style={{
+            padding:'10px 16px', background:'rgba(255,255,255,0.06)',
+            border:'1px solid var(--border)', borderRadius:'var(--radius)', color:'var(--text-primary)', fontSize:13, fontWeight:600,
+            cursor: !results ? 'not-allowed' : 'pointer', fontFamily:'Inter, sans-serif'
+          }}>
+            📥 Export Audit Packet (JSON)
+          </button>
+          <button onClick={runEval} disabled={running} style={{
+            padding:'10px 20px', background:'linear-gradient(135deg, var(--accent), #4f46e5)',
+            border:'none', borderRadius:'var(--radius)', color:'white', fontSize:13, fontWeight:600,
+            cursor: running ? 'not-allowed' : 'pointer', opacity: running ? 0.6 : 1,
+            fontFamily:'Inter, sans-serif'
+          }}>
+            {running ? '⚙️ Running…' : '▶ Run Evaluation'}
+          </button>
+        </div>
       </div>
 
       <div className="tabs">

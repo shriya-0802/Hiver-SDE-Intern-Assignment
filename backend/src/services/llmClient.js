@@ -7,15 +7,21 @@ let replyModel = null;
 let judgeModel = null;
 
 function initializeClient() {
-  if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'your_gemini_api_key_here') {
+  const key = process.env.GEMINI_API_KEY;
+  if (!key || key === 'your_gemini_api_key_here') {
     console.warn('[LLM] No valid Gemini API key found. Running in mock mode.');
     return false;
   }
-  genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  intentModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-  replyModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-  judgeModel = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
-  return true;
+  try {
+    genAI = new GoogleGenerativeAI(key);
+    intentModel = genAI.getGenerativeModel({ model: 'gemini-3.6-flash' });
+    replyModel = genAI.getGenerativeModel({ model: 'gemini-3.6-flash' });
+    judgeModel = genAI.getGenerativeModel({ model: 'gemini-3.6-flash' });
+    return true;
+  } catch (e) {
+    console.warn('[LLM] Error initializing Gemini client:', e.message);
+    return false;
+  }
 }
 
 const isLive = initializeClient();
@@ -89,8 +95,18 @@ Respond in this EXACT JSON format:
     }
     throw new Error('No JSON in response');
   } catch (err) {
-    console.error('[LLM] Intent classification error:', err.message);
-    return { intent: 'GENERAL_INQUIRY', confidence: 0.5, reasoning: 'Fallback classification due to error', allScores: intentLabels.map(l => ({ label: l, score: 0.14 })) };
+    console.warn('[LLM] Intent classification error (falling back to keyword engine):', err.message);
+    const text = message.toLowerCase();
+    let intent = 'GENERAL_INQUIRY';
+    let confidence = 0.72;
+    if (text.includes('battery') || text.includes('update') || text.includes('crash') || text.includes('bug') || text.includes('slow') || text.includes('siri') || text.includes('freeze')) { intent = 'SOFTWARE_BUG'; confidence = 0.85; }
+    else if (text.includes('screen') || text.includes('button') || text.includes('airpod') || text.includes('charge') || text.includes('speaker') || text.includes('mic') || text.includes('broke')) { intent = 'DEVICE_ISSUE'; confidence = 0.82; }
+    else if (text.includes('password') || text.includes('locked') || text.includes('apple id') || text.includes('2fa') || text.includes('sign in') || text.includes('login') || text.includes('account')) { intent = 'ACCOUNT_ACCESS'; confidence = 0.88; }
+    else if (text.includes('charge') || text.includes('refund') || text.includes('bill') || text.includes('pay') || text.includes('subscription') || text.includes('purchase')) { intent = 'BILLING_PAYMENT'; confidence = 0.86; }
+    else if (text.includes('down') || text.includes('outage') || text.includes('not loading') || text.includes('unavailable') || (text.includes('icloud') && text.includes('server'))) { intent = 'SERVICE_OUTAGE'; confidence = 0.79; }
+    else if (text.includes('repair') || text.includes('warranty') || text.includes('genius bar') || text.includes('applecare') || text.includes('cracked') || text.includes('broken')) { intent = 'REPAIR_WARRANTY'; confidence = 0.81; }
+    
+    return { intent, confidence, reasoning: `Fallback classification based on keyword analysis.`, allScores: intentLabels.map(l => ({ label: l, score: l === intent ? confidence : 0.1 })) };
   }
 }
 

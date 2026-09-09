@@ -118,12 +118,22 @@ function determineEscalation(intent, confidence, message, conversationHistory = 
     reasons.push('Standard case — draft prepared for agent review');
   }
 
+  const frustrationPct = Math.round(frustrationScore * 100);
+  const sentimentLevel = hasSafetyConcern ? 'CRITICAL_HAZARD' : frustrationPct >= 60 ? 'HIGH_FRUSTRATION' : frustrationPct >= 30 ? 'MODERATE_FRUSTRATION' : 'CALM';
+  const sentimentEmoji = hasSafetyConcern ? '🚨' : frustrationPct >= 60 ? '😤' : frustrationPct >= 30 ? '😐' : '😊';
+
   return {
     tier,
     label: ESCALATION_TIERS[tier].label,
     color: ESCALATION_TIERS[tier].color,
     description: ESCALATION_TIERS[tier].description,
     reasons,
+    sentimentPulse: {
+      scorePct: frustrationPct,
+      level: sentimentLevel,
+      emoji: sentimentEmoji,
+      frustrationScore: parseFloat(frustrationScore.toFixed(2))
+    },
     signals: {
       frustrationScore: parseFloat(frustrationScore.toFixed(2)),
       hasSafetyConcern,

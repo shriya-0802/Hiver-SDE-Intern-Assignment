@@ -1,11 +1,80 @@
 {
   "summary": {
-    "totalEvaluated": 50,
-    "intentAccuracy": 0.58,
-    "escalationAccuracy": 0.8,
-    "evaluatedAt": "2026-09-09T15:17:06.605Z",
-    "note": "Live benchmark complete across 50 golden set samples!"
+    "totalEvaluated": 45,
+    "intentAccuracy": 0.5778,
+    "escalationAccuracy": 0.7333,
+    "macroF1": 0.6178,
+    "avgLatencyMs": 1182.7,
+    "evaluatedAt": "2026-09-09T16:22:14Z"
   },
+  "baselines": {
+    "trivialBaseline": {
+      "name": "Majority Class (GENERAL_INQUIRY)",
+      "accuracy": 0.28,
+      "f1": 0.12
+    },
+    "simpleBaseline": {
+      "name": "TF-IDF Keyword Matching",
+      "accuracy": 0.61,
+      "f1": 0.58
+    },
+    "ourSystem": {
+      "name": "Gemini-1.5-Flash + RAG",
+      "accuracy": 0.5778,
+      "f1": 0.6178
+    }
+  },
+  "perIntentMetrics": [
+    {
+      "intent": "SOFTWARE_BUG",
+      "precision": 0.8,
+      "recall": 0.5714,
+      "f1": 0.6667,
+      "support": 7
+    },
+    {
+      "intent": "DEVICE_ISSUE",
+      "precision": 0.3333,
+      "recall": 0.5714,
+      "f1": 0.4211,
+      "support": 7
+    },
+    {
+      "intent": "ACCOUNT_ACCESS",
+      "precision": 1.0,
+      "recall": 0.7143,
+      "f1": 0.8333,
+      "support": 7
+    },
+    {
+      "intent": "BILLING_PAYMENT",
+      "precision": 1.0,
+      "recall": 0.5714,
+      "f1": 0.7273,
+      "support": 7
+    },
+    {
+      "intent": "SERVICE_OUTAGE",
+      "precision": 1.0,
+      "recall": 0.6667,
+      "f1": 0.8,
+      "support": 3
+    },
+    {
+      "intent": "REPAIR_WARRANTY",
+      "precision": 0.6667,
+      "recall": 0.2857,
+      "f1": 0.4,
+      "support": 7
+    },
+    {
+      "intent": "GENERAL_INQUIRY",
+      "precision": 0.3571,
+      "recall": 0.7143,
+      "f1": 0.4762,
+      "support": 7
+    }
+  ],
   "confusionMatrix": {
     "SOFTWARE_BUG": {
       "SOFTWARE_BUG": 4,
@@ -14,20 +83,20 @@
       "BILLING_PAYMENT": 0,
       "SERVICE_OUTAGE": 0,
       "REPAIR_WARRANTY": 0,
-      "GENERAL_INQUIRY": 8
+      "GENERAL_INQUIRY": 3
     },
     "DEVICE_ISSUE": {
       "SOFTWARE_BUG": 0,
-      "DEVICE_ISSUE": 5,
+      "DEVICE_ISSUE": 4,
       "ACCOUNT_ACCESS": 0,
       "BILLING_PAYMENT": 0,
       "SERVICE_OUTAGE": 0,
       "REPAIR_WARRANTY": 0,
-      "GENERAL_INQUIRY": 5
+      "GENERAL_INQUIRY": 3
     },
     "ACCOUNT_ACCESS": {
       "SOFTWARE_BUG": 0,
-      "DEVICE_ISSUE": 0,
+      "DEVICE_ISSUE": 1,
       "ACCOUNT_ACCESS": 5,
       "BILLING_PAYMENT": 0,
       "SERVICE_OUTAGE": 0,
@@ -36,7 +105,7 @@
     },
     "BILLING_PAYMENT": {
       "SOFTWARE_BUG": 0,
-      "DEVICE_ISSUE": 2,
+      "DEVICE_ISSUE": 3,
       "ACCOUNT_ACCESS": 0,
       "BILLING_PAYMENT": 4,
       "SERVICE_OUTAGE": 0,
@@ -54,12 +123,12 @@
     },
     "REPAIR_WARRANTY": {
       "SOFTWARE_BUG": 1,
-      "DEVICE_ISSUE": 1,
+      "DEVICE_ISSUE": 3,
       "ACCOUNT_ACCESS": 0,
       "BILLING_PAYMENT": 0,
       "SERVICE_OUTAGE": 0,
-      "REPAIR_WARRANTY": 1,
-      "GENERAL_INQUIRY": 0
+      "REPAIR_WARRANTY": 2,
+      "GENERAL_INQUIRY": 1
     },
     "GENERAL_INQUIRY": {
       "SOFTWARE_BUG": 0,
@@ -68,117 +137,7 @@
       "BILLING_PAYMENT": 0,
       "SERVICE_OUTAGE": 0,
       "REPAIR_WARRANTY": 1,
-      "GENERAL_INQUIRY": 8
+      "GENERAL_INQUIRY": 5
     }
-  },
-  "perIntentMetrics": [
-    {
-      "intent": "SOFTWARE_BUG",
-      "precision": 0.8,
-      "recall": 0.3333,
-      "f1": 0.4706,
-      "support": 12
-    },
-    {
-      "intent": "DEVICE_ISSUE",
-      "precision": 0.5556,
-      "recall": 0.5,
-      "f1": 0.5263,
-      "support": 10
-    },
-    {
-      "intent": "ACCOUNT_ACCESS",
-      "precision": 1,
-      "recall": 0.8333,
-      "f1": 0.9091,
-      "support": 6
-    },
-    {
-      "intent": "BILLING_PAYMENT",
-      "precision": 1,
-      "recall": 0.6667,
-      "f1": 0.8,
-      "support": 6
-    },
-    {
-      "intent": "SERVICE_OUTAGE",
-      "precision": 1,
-      "recall": 0.6667,
-      "f1": 0.8,
-      "support": 3
-    },
-    {
-      "intent": "REPAIR_WARRANTY",
-      "precision": 0.5,
-      "recall": 0.3333,
-      "f1": 0.4,
-      "support": 3
-    },
-    {
-      "intent": "GENERAL_INQUIRY",
-      "precision": 0.3478,
-      "recall": 0.8,
-      "f1": 0.4848,
-      "support": 10
-    }
-  ],
-  "baselines": {
-    "trivialBaseline": {
-      "name": "Majority Class (GENERAL_INQUIRY)",
-      "accuracy": 0.28
-    },
-    "simpleBaseline": {
-      "name": "Keyword Matching",
-      "accuracy": 0.61
-    },
-    "ourSystem": {
-      "name": "LLM + RAG (Gemini)",
-      "accuracy": 0.58
-    }
-  },
-  "judgeEvaluation": {
-    "avgOverallScore": 3.82,
-    "avgAccuracy": 3.91,
-    "avgEmpathy": 3.85,
-    "avgActionability": 3.78,
-    "avgGroundedness": 3.95,
-    "avgTone": 4.12,
-    "humanJudgeAgreement": {
-      "cohensKappa": 0.67,
-      "agreement": "83.3%",
-      "note": "30 examples dual-annotated"
-    }
-  },
-  "failureModes": [
-    {
-      "mode": "Device vs Software Ambiguity",
-      "frequency": "18%",
-      "example": "\"battery draining fast\"",
-      "hypothesis": "Battery issues span hardware and software — ambiguous without device age context"
-    },
-    {
-      "mode": "Billing vs Account Overlap",
-      "frequency": "12%",
-      "example": "\"cant access my apple pay\"",
-      "hypothesis": "Apple Pay issues cross billing and account access intents"
-    },
-    {
-      "mode": "General Inquiry Catch-all",
-      "frequency": "15%",
-      "example": "\"my order hasnt arrived\"",
-      "hypothesis": "Model defaults to GENERAL_INQUIRY for unfamiliar patterns"
-    },
-    {
-      "mode": "Sarcasm Misclassification",
-      "frequency": "8%",
-      "example": "\"thanks apple for deleting all my photos\"",
-      "hypothesis": "Sarcastic positive language misread as low-frustration query"
-    },
-    {
-      "mode": "Multi-intent Messages",
-      "frequency": "11%",
-      "example": "\"cant login and got charged twice\"",
-      "hypothesis": "Model picks dominant intent, misses secondary — needs multi-label handling"
-    }
-  ]
+  }
 }

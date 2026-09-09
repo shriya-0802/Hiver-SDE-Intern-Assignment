@@ -1,4 +1,14 @@
-require('dotenv').config();
+const path = require('path');
+const fs = require('fs');
+
+// Load environment variables from backend/.env or root .env
+const envPath = fs.existsSync(path.resolve(__dirname, '../.env')) ? path.resolve(__dirname, '../.env') : path.resolve(__dirname, '../../.env');
+require('dotenv').config({ path: envPath });
+// Also load root .env as fallback/override if root contains key
+if (fs.existsSync(path.resolve(__dirname, '../../.env'))) {
+  require('dotenv').config({ path: path.resolve(__dirname, '../../.env'), override: true });
+}
+
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
