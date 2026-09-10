@@ -104,6 +104,13 @@ router.post('/respond', async (req, res) => {
   }
 });
 
+// POST /api/agent/clear-queries — clear all previous queries
+router.post('/clear-queries', (req, res) => {
+  const { clearTickets } = require('../services/ticketStore');
+  clearTickets();
+  res.json({ success: true, message: 'All previous queries cleared' });
+});
+
 // GET /api/agent/user-queries — list all user queries with evaluation % & admin resolution status
 router.get('/user-queries', (req, res) => {
   const { getTickets } = require('../services/ticketStore');

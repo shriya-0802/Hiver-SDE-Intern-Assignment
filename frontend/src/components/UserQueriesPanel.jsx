@@ -59,6 +59,16 @@ export default function UserQueriesPanel() {
     ? Math.round(queries.reduce((acc, q) => acc + (q.evalScorePct || 85), 0) / totalCount)
     : 85;
 
+  const handleClear = async () => {
+    if (!window.confirm('Are you sure you want to clear all previous queries?')) return;
+    try {
+      await fetch(`${API}/api/agent/clear-queries`, { method: 'POST' });
+      fetchQueries();
+    } catch (e) {
+      console.error('Error clearing queries:', e);
+    }
+  };
+
   if (loading) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1, height: '100%' }}>
@@ -82,23 +92,42 @@ export default function UserQueriesPanel() {
             Track real-time evaluation scores, AI confidence, and Admin resolution status for all your customer support queries.
           </div>
         </div>
-        <button
-          onClick={fetchQueries}
-          style={{
-            padding: '8px 14px',
-            background: 'rgba(255,255,255,0.06)',
-            border: '1px solid var(--border)',
-            borderRadius: 'var(--radius)',
-            color: 'var(--text-primary)',
-            fontSize: 12,
-            fontWeight: 600,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6
-          }}>
-          🔄 Refresh Status
-        </button>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button
+            onClick={handleClear}
+            style={{
+              padding: '8px 14px',
+              background: 'rgba(239,68,68,0.1)',
+              border: '1px solid rgba(239,68,68,0.3)',
+              borderRadius: 'var(--radius)',
+              color: 'var(--red)',
+              fontSize: 12,
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6
+            }}>
+            🗑️ Clear History
+          </button>
+          <button
+            onClick={fetchQueries}
+            style={{
+              padding: '8px 14px',
+              background: 'rgba(255,255,255,0.06)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius)',
+              color: 'var(--text-primary)',
+              fontSize: 12,
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6
+            }}>
+            🔄 Refresh Status
+          </button>
+        </div>
       </div>
 
       {/* Metric Cards Summary */}
