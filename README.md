@@ -1,43 +1,36 @@
 # Apple Customer Support Assistant
 
-### Hiver Software Development Engineer Intern Assignment Technical Report
-**Author:** Shriya Mohanty  
-**Repository:** https://github.com/shriya-0802/Hiver-SDE-Intern-Assignment.git  
-**Date:** September 2026  
+Take-Home Assignment Report for Hiver SDE Intern Application  
+Author: Shriya Mohanty  
+GitHub Repository: https://github.com/shriya-0802/Hiver-SDE-Intern-Assignment.git  
 
 ---
 
-## Section 1: Project Summary, Architecture, and Local Quick Start
+## Overview and Quick Setup
 
-This project implements an end-to-end customer support automation platform tailored specifically for Apple customer service (@AppleSupport). The architecture combines real-time intent classification, vector similarity retrieval (RAG) over historical Apple customer interactions, a four-tier risk escalation guardrail system, an administrative specialist console, and an offline automated evaluation pipeline.
+I built an end-to-end customer support assistant specifically for Apple (@AppleSupport). The system classifies incoming user issues, retrieves relevant troubleshooting steps using TF-IDF vector similarity over past Apple support interactions, enforces a 4-tier safety guardrail rule engine, and provides an admin console for human specialists to review and edit drafted responses.
 
-### System Architecture Overview
+### How to Run the App Locally
 
-Customer Request -> Intent Classifier (7 Categories) -> TF-IDF Vector Search -> Risk & Policy Guardrails (4 Tiers) -> Response Generator -> Quality Evaluator & Specialist Console
+You can test the application on any standard laptop in less than three minutes. No GPU is required.
 
-### Running the System Locally (Under 3 Minutes)
-
-The software runs on standard laptop hardware without requiring dedicated GPU acceleration.
-
-#### Option 1: Full-Stack Web Application (Two Terminals)
-
-Terminal 1: Start the Express backend service (Port 3001)
+Terminal 1: Start the backend server (Port 3001)
 ```bash
 cd backend
 npm install
 npm start
 ```
 
-Terminal 2: Start the React frontend application (Port 5173)
+Terminal 2: Start the React frontend (Port 5173)
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-Navigate to http://localhost:5173 in your web browser to open the interactive support dashboard.
+Open http://localhost:5173 in your browser to view the interactive support interface.
 
-#### Option 2: Automated Evaluation Pipeline (Under 60 Seconds)
+### Running the Evaluation Script
 
 ```bash
 cd data_pipeline
@@ -45,94 +38,88 @@ python -m pip install -r requirements.txt
 python 03_run_eval.py
 ```
 
-#### Option 3: Cloud Deployment on Render
+### Deploying to Render
 
-This project includes a production configuration file (render.yaml) for single-click deployment on Render.
-1. Link your GitHub repository in the Render Dashboard under Blueprints.
-2. Provide your GEMINI_API_KEY environment variable.
-3. Select Apply. Render compiles the React frontend and deploys the Express backend as a unified web service.
+The repository includes a render.yaml file for deployment. You can connect your GitHub account to Render, set your GEMINI_API_KEY environment variable, and deploy the combined backend and React frontend as a single Web Service.
 
 ---
 
-## Section 2: Problem Framing and Brand Alignment
+## How I Designed the System for Apple
 
-### Defining Service Quality for Apple Support
+Apple has a strong brand reputation built on technical clarity, user privacy, and customer trust. A support assistant for Apple cannot behave like a generic chatbot.
 
-Apple maintains strict standards around customer trust, technical accuracy, personal privacy, and clear communication. Operating an automated support system under the @AppleSupport handle requires adhering to four specific design constraints:
+When designing the assistant, I established four primary requirements:
 
-1. Zero Tolerance for Policy or Pricing Hallucinations: The system must never state incorrect warranty terms or repair costs. For example, claiming that accidental liquid damage is covered under standard AppleCare violates Apple's service policies.
-2. Immediate Escalation for High-Risk Inquiries: Security and safety issues—such as locked Apple IDs, billing disputes, unauthorized account access, or physical battery swelling—must route immediately to human specialists.
-3. Consistent Brand Voice: Responses must remain polite, concise, and structured, ending with an official support specialist handle (^AS).
-4. Real-Time Status Transparency: Customers must see confidence scores, hardware diagnostic readings, and clear indicators showing whether an issue was auto-resolved or routed to an admin specialist.
+First, the system must never invent warranty terms or repair prices. Claiming that accidental water damage is covered for free under standard warranty would be a major policy error.
 
-### Scope Choices and Explicit Non-Goals
+Second, high-risk requests must be escalated immediately. Issues like locked Apple IDs, disputed payments, or battery swelling should never be auto-resolved by AI without human specialist review.
 
-1. No Fine-Tuning of Large Open-Source Models: Fine-tuning an 8B parameter model on noisy Twitter data requires significant training time and yields unpredictable results compared to prompt engineering paired with RAG. I prioritized fast local execution, low latency, and reproducible evaluation.
-2. No Unsupervised Account Modifications or Refunds: Granting an automated system the power to reset passwords or process refunds directly introduces severe security vulnerabilities. I implemented a four-tier guardrail engine where sensitive actions produce human-reviewable drafts for specialist approval instead.
-3. No Over-Segmented 30-Class Taxonomy: Support messages on Twitter are frequently noisy and contain multiple requests. Forcing a classifier into 30 narrow categories leads to classification errors. I selected a 7-class taxonomy matching actual Apple department routing structures.
+Third, responses should sound like real Apple support interactions—polite, structured, and ending with an official support handle like ^AS.
 
----
+Fourth, users should have total transparency into system decisions, seeing real-time confidence scores and clear tags showing whether an issue was auto-resolved or sent to an admin.
 
-## Section 3: Golden Evaluation Set and Sampling Methodology
+### What I Decided Not to Build
 
-To evaluate classification and response quality, I built a Golden Evaluation Set containing 150 hand-labelled multi-turn support interactions extracted from the Kaggle Twitter Customer Support dataset (twcs.csv), filtering for @AppleSupport interactions (~180,000 tweets).
+I deliberately avoided fine-tuning large open-source language models on raw Twitter datasets. Training an 8B model takes hours and often produces unpredictable outputs. Instead, I combined calibrated prompt engineering with TF-IDF retrieval, keeping the setup fast, lightweight, and easy to run locally.
 
-### Data Sampling and Annotation Process
+I also avoided automated account actions like automatic password resets or instant refund processing. Triggering financial or account changes directly without human approval creates serious security risks. Instead, the assistant drafts responses for high-risk categories so an admin can approve or edit them before sending.
 
-- Stratified Sampling: I sampled examples evenly across seven intent categories to eliminate majority-class evaluation bias.
-- Data Cleaning: I filtered out incomplete tweet threads, automated promotional posts, and messages lacking clear context.
-- Manual Annotation: I personally reviewed and labeled each sample with three annotations:
-  1. Ground Truth Intent: SOFTWARE_BUG, DEVICE_ISSUE, ACCOUNT_ACCESS, BILLING_PAYMENT, SERVICE_OUTAGE, REPAIR_WARRANTY, GENERAL_INQUIRY.
-  2. Ground Truth Escalation Tier: AUTO_RESOLVE, SUGGEST, ESCALATE, FLAG_URGENT.
-  3. Ground Truth Resolution Steps.
-
-### Intent Category Distribution (150 Hand-Labelled Samples)
-
-| Category | Sample Count | Percentage | Primary Focus |
-| --- | --- | --- | --- |
-| SOFTWARE_BUG | 28 | 18.7% | OS update issues, application crashes, performance degradation |
-| DEVICE_ISSUE | 26 | 17.3% | Battery drain, display flickering, audio distortion, hardware faults |
-| ACCOUNT_ACCESS | 22 | 14.7% | Locked Apple IDs, two-factor authentication, password recovery |
-| BILLING_PAYMENT | 22 | 14.7% | Unrecognized App Store charges, double billing, subscription issues |
-| SERVICE_OUTAGE | 16 | 10.7% | iCloud synchronization down, iMessage delivery failures |
-| REPAIR_WARRANTY | 18 | 12.0% | Screen replacement pricing, AppleCare+ coverage, trade-in logistics |
-| GENERAL_INQUIRY | 18 | 12.0% | Feature clarification, device compatibility, store information |
+Lastly, I avoided creating a overly complex taxonomy of 30 different classes. Twitter queries are messy and often touch multiple topics. I focused on seven clear intent categories that line up with real Apple support teams.
 
 ---
 
-## Section 4: Evaluation Pipeline and Judge Calibration
+## Hand-Labelled Evaluation Dataset
 
-The evaluation pipeline (data_pipeline/03_run_eval.py) calculates classification accuracy, macro F1 score, latency, and RAG retrieval precision. It also runs an automated evaluation judge scoring responses on a 1 to 5 scale across five quality criteria:
+To test the system reliably, I built a golden dataset of 150 hand-labelled multi-turn support conversations. These were sampled directly from the Kaggle Twitter Customer Support dataset, focusing on tweets sent to @AppleSupport.
 
-1. Technical Accuracy: Correctness of troubleshooting steps and guidance.
-2. Empathy: Polite, respectful, and customer-focused language.
-3. Actionability: Clear, sequential resolution steps.
-4. Groundedness: Strict adherence to retrieved knowledge base facts without hallucination.
-5. Compliance: Inclusion of official specialist handles (^AS) and adherence to Apple support guidelines.
+### How I Sampled and Labelled the Data
 
-### Inter-Rater Agreement: Automated Judge vs Human Reviewer
+I used stratified sampling to pick an equal distribution of queries across seven intent categories. This prevented majority classes from skewing the results.
 
-To confirm that the automated evaluation judge produces reliable scores, I conducted a dual-annotation calibration study comparing 30 human-scored responses against the automated judge:
+After filtering out incomplete threads, promotional messages, and broken tweets, I manually annotated each of the 150 examples with three details:
+1. Intent Label: SOFTWARE_BUG, DEVICE_ISSUE, ACCOUNT_ACCESS, BILLING_PAYMENT, SERVICE_OUTAGE, REPAIR_WARRANTY, GENERAL_INQUIRY.
+2. Escalation Tier: AUTO_RESOLVE, SUGGEST, ESCALATE, FLAG_URGENT.
+3. Expected Resolution Steps.
 
-- Cohen's Kappa Score: 0.67 (Substantial agreement under standard inter-rater reliability benchmarks)
-- Raw Agreement Rate (within 1 point tolerance): 83.3%
-- Pearson Correlation Coefficient: 0.76 across overall score distributions
+### Intent Category Breakdown (150 Samples)
 
-Key Finding: The automated judge shows strong alignment with human raters on technical accuracy and factual groundedness, while rating polite language slightly higher (+0.3 points) than human reviewers.
+- SOFTWARE_BUG: 28 samples (18.7%) - OS updates, app crashes, performance slowdowns.
+- DEVICE_ISSUE: 26 samples (17.3%) - Fast battery drain, screen flickering, audio glitches.
+- ACCOUNT_ACCESS: 22 samples (14.7%) - Locked Apple IDs, two-factor auth loops, password recovery.
+- BILLING_PAYMENT: 22 samples (14.7%) - Unexpected App Store charges, subscription cancellations.
+- SERVICE_OUTAGE: 16 samples (10.7%) - iCloud sync failures, iMessage outages, App Store down.
+- REPAIR_WARRANTY: 18 samples (12.0%) - Screen replacement costs, AppleCare+ checks, trade-in questions.
+- GENERAL_INQUIRY: 18 samples (12.0%) - Feature questions, device compatibility, store hours.
 
 ---
 
-## Section 5: Experimental Results vs Baselines
+## Automated Evaluation & Judge Calibration
 
-I benchmarked the system against two baselines across the 150-example Golden Evaluation Set:
+The evaluation script in data_pipeline/03_run_eval.py measures intent accuracy, macro F1, response latency, and RAG retrieval precision. It also uses an LLM judge to evaluate response quality on a 1 to 5 scale across five areas: technical accuracy, empathy, actionability, groundedness, and tone compliance.
 
-1. Trivial Baseline: A baseline model predicting the majority class (GENERAL_INQUIRY) for all inputs with a static response.
-2. Simple Baseline: A keyword-matching script using regular expressions for terms like "battery", "bill", or "password".
-3. Proposed System: Intent Classifier + TF-IDF Vector RAG Store + 4-Tier Guardrail Engine + Gemini 1.5.
+### Checking How Well the Automated Judge Agrees with a Human
 
-### Comprehensive Baseline Comparison Table
+To make sure the automated judge was not simply giving high scores blindly, I manually evaluated 30 model responses and compared my scores against the judge.
 
-| System Name | Intent Accuracy | Escalation Accuracy | Macro F1 | RAG Precision | Latency Range |
+The results showed a Cohen's Kappa score of 0.67, which represents substantial agreement. The raw agreement rate within a 1-point tolerance was 83.3%, with a Pearson correlation coefficient of 0.76.
+
+I noticed that the judge aligns closely with human raters when evaluating technical advice and factual accuracy. However, it tends to rate polite phrasing slightly higher (+0.3 points) than a human reviewer would.
+
+---
+
+## Baseline Comparisons
+
+I tested the system against two baseline approaches on the 150-example dataset:
+
+The Trivial Baseline always predicts the most common class (GENERAL_INQUIRY) and returns a generic fallback answer.
+
+The Simple Baseline uses regular expression keyword rules matching terms like "battery", "charge", or "password".
+
+My system uses intent classification combined with TF-IDF RAG retrieval and a 4-tier guardrail engine.
+
+### Performance Summary Table
+
+| System Name | Intent Accuracy | Escalation Accuracy | Macro F1 | RAG Precision | Latency |
 | --- | --- | --- | --- | --- | --- |
 | Trivial Baseline (Majority Class) | 28.0% | 58.0% | 0.062 | N/A | < 1 ms |
 | Simple Baseline (Keyword Rules) | 61.0% | 68.0% | 0.580 | N/A | < 1 ms |
@@ -140,90 +127,93 @@ I benchmarked the system against two baselines across the 150-example Golden Eva
 
 ---
 
-## Section 6: Critical Analysis of Headline Metrics
+## Honest Look at My Accuracy Numbers
 
-A headline accuracy of 78.7% or 92.4% appears high on paper, but evaluating a production system solely on accuracy can hide serious operational weaknesses. Below is an honest breakdown of what single-number accuracy fails to capture:
+While a headline accuracy of 78.7% or 92.4% looks strong at first glance, relying on a single metric can be misleading. Here are four reasons why accuracy alone does not tell the whole story:
 
-1. Class Imbalance Obscures High-Risk Failures: Accuracy reflects performance on high-volume categories like software bugs and device issues. A model could achieve 80% overall accuracy while failing entirely on low-volume, critical account security requests. Macro F1 (0.771) provides a more realistic measure of performance across all categories.
-2. Category Ambiguity and Human Labeling Ceilings: Customer messages frequently span multiple domains. A tweet such as "My iPhone battery drains in 3 hours after updating iOS" can reasonably be classified as a software bug or a hardware battery issue. Inter-annotator agreement on this dataset is approximately 83.3%, which creates an effective upper bound of around 85% for single-label accuracy.
-3. Dataset Cleanliness vs Live Noise: The evaluation set consists of filtered multi-turn conversations. In live production, customer tweets contain spelling errors, slang, sarcastic remarks, and multiple simultaneous questions, where zero-shot accuracy typically drops by 10 to 15 percentage points.
-4. Asymmetry of Error Costs: Standard accuracy treats all classification errors as equal. In customer operations, failing to escalate a compromised account or a swelling battery (a false negative) carries far greater risk than unnecessarily routing a minor software inquiry to human review (a false positive). Accuracy alone does not reflect operational safety.
+First, dataset class imbalance can hide failures in smaller categories. Accuracy rewards strong performance on frequent intents like software bugs and device issues. A model could score 80% accuracy while failing completely on low-volume, critical account security requests. Looking at Macro F1 (0.771) gives a much fairer picture of overall quality across all categories.
 
----
+Second, real support queries often overlap across categories. A tweet like "My iPhone battery drains in 3 hours after updating iOS" could reasonably be tagged as a software bug or a hardware battery problem. Human labelers only agreed on exact labels about 83.3% of the time on this dataset, creating a natural ceiling around 85% for single-label accuracy.
 
-## Section 7: Detailed Failure Analysis
+Third, clean evaluation data behaves differently than real user input. The golden dataset uses clean multi-turn threads. In real life, customer tweets contain typos, slang, sarcastic comments, and multiple questions at once. Zero-shot accuracy usually drops by 10 to 15 percent on raw production data.
 
-Below is an examination of the top five failure modes encountered during evaluation, including error frequencies, real customer examples, root cause analyses, and implemented fixes:
-
-### Failure Mode 1: Device Hardware vs Software Bug Overlap
-- Error Frequency: 18% of classification errors
-- Customer Message Example: "My iPhone battery drains in 3 hours after updating to iOS 17."
-- Technical Cause: Post-update background processes and battery degradation present identical text patterns. Without hardware telemetry, single-label classification defaults to a software bug.
-- System Fix: Implemented an interactive hardware diagnostics scanner in the frontend interface to read device telemetry before classification.
-
-### Failure Mode 2: Billing Dispute vs Account Access Conflict
-- Error Frequency: 12% of classification errors
-- Customer Message Example: "Can't sign in to my Apple ID to manage my AppleCare subscription."
-- Technical Cause: The message contains both billing and authentication concerns. The single-label classifier selects one category, obscuring the primary sign-in blocker.
-- System Fix: Configured guardrail rules to prioritize account security over billing inquiries whenever authentication blockers are detected.
-
-### Failure Mode 3: Sarcasm and Passive Aggressive Sentiment
-- Error Frequency: 8% of classification errors
-- Customer Message Example: "Thanks Apple for deleting all my family photos in the new update!"
-- Technical Cause: Opening phrases like "Thanks Apple" deceive simple sentiment analysis into scoring the issue as low risk, bypassing urgent escalation.
-- System Fix: Added explicit keyword rules targeting data loss phrases independent of general sentiment polarity.
-
-### Failure Mode 4: Non-Standard Shipping and Logistics Phrasing
-- Error Frequency: 15% of classification errors
-- Customer Message Example: "Where is my trade-in shipping box?"
-- Technical Cause: Unusual customer phrasing causes the classifier to fall back to general inquiry rather than repair and logistics routing.
-- System Fix: Expanded RAG vector index entries for trade-in shipping status and return kit tracking.
-
-### Failure Mode 5: Pre-Release iOS Beta Software Queries
-- Error Frequency: 11% of classification errors
-- Customer Message Example: "iOS 18 beta broke my carplay connection."
-- Technical Cause: The RAG knowledge base contains documentation for public software releases. Unreleased beta versions lack grounded knowledge base articles, resulting in generic responses.
-- System Fix: Added prompt instructions that direct beta software users to the official Apple Beta Feedback Assistant tool.
+Fourth, misclassification costs are asymmetric. Standard accuracy treats all mistakes equally. But in real customer support, failing to escalate a locked account or a swollen battery is far more dangerous than accidentally sending a minor bug report to human review. High overall accuracy does not guarantee safety.
 
 ---
 
-## Section 8: Engineering Decision Log
+## Real Failure Examples & Lessons
 
-1. Selected @AppleSupport Dataset: Apple has the largest volume of support tweets in the dataset (~180k tweets), covering software, hardware, billing, and security.
-2. Designed a 7-Class Intent Taxonomy: 3 classes is too vague for routing, while 30 classes causes overfitting on noisy tweets. 7 classes match real Apple support departments.
-3. Used TF-IDF Vector Indexing for RAG: TF-IDF requires zero external GPU infrastructure, indexes in under 100 ms, and runs reproducibly on any laptop.
-4. Created a 4-Tier Escalation Engine: Instead of binary escalation, the SUGGEST tier creates human-reviewable drafts for 60% of technical issues safely.
-5. Hand-Labelled a Stratified 150-Sample Dataset: 150 carefully audited, balanced examples provide tighter statistical confidence than 500 unverified tweets.
-6. Split Gemini Models for Production vs Evaluation: Gemini 1.5 Flash provides sub-second latency for live chat, while Gemini 1.5 Pro provides thorough reasoning for offline evaluation.
-7. Included Keyword Fallback Rules: I built rule-based fallback logic so reviewers can test the application without needing an active API key.
-8. Set Hardcoded Physical Safety Rules: Overheating or swelling battery queries immediately trigger FLAG_URGENT status, independent of LLM confidence.
-9. Filtered RAG Retrieval at 0.65 Cosine Similarity: Context below 0.65 similarity introduces noisy context, so low-confidence queries default to core instructions.
-10. Built an Interactive React Dashboard: Recharts visualization makes metrics, radar charts, and confusion matrices easy to explore interactively.
-11. Decoupled Intent Classification from Escalation Routing: Intent tracks the topic, while escalation tracks risk and frustration. Separating them allows updating safety thresholds independently.
-12. Integrated Single-Service Architecture for Render: Bundling the compiled React app directly inside Express eliminated CORS issues and simplified cloud deployment.
-13. Added Multi-Language Interface Support: Enabled customer UI language toggles (English, Spanish, French, Japanese, Hindi) for international testing.
-14. Implemented Native Speech Recognition and Synthesis: Integrated browser Web Speech APIs for hands-free voice input and Siri audio read-aloud without heavy third-party dependencies.
-15. Created PDF and Word Document Report Export Utilities: Built automated scripts to format technical documentation into clean PDF and Word artifacts.
+Here are five specific failure cases I found while testing the system, along with why they happened and how I addressed them:
+
+1. Hardware Battery Issues vs Software Bug Overlap
+Frequency: 18% of classification errors.
+Example Query: "My iPhone battery drains in 3 hours after updating to iOS 17."
+Why it Failed: Background indexing after an update and physical battery aging look identical in text. Without live battery health data, the model defaults to tagging it as a software bug.
+How I Fixed It: I added an interactive hardware diagnostics scanner in the frontend to check battery health before classifying the issue.
+
+2. Billing Disputes Blended with Account Sign-In Blockers
+Frequency: 12% of classification errors.
+Example Query: "Can't sign in to my Apple ID to manage my AppleCare subscription."
+Why it Failed: The message contains both billing and authentication topics. The model picks one label and misses the underlying sign-in problem.
+How I Fixed It: I updated the guardrail rules to prioritize account security over billing whenever sign-in issues are mentioned.
+
+3. Sarcasm and Passive-Aggressive Comments
+Frequency: 8% of classification errors.
+Example Query: "Thanks Apple for deleting all my family photos in the new update!"
+Why it Failed: Polite words like "Thanks Apple" fool simple sentiment checks into treating the query as low frustration, missing the data loss emergency.
+How I Fixed It: I added explicit keyword rules that trigger high-urgency escalation whenever data loss phrases appear, regardless of sentiment.
+
+4. Non-Standard Shipping and Logistics Wording
+Frequency: 15% of classification errors.
+Example Query: "Where is my trade-in shipping box?"
+Why it Failed: Casual customer phrasing causes the classifier to drop into general inquiry instead of routing to repair and logistics.
+How I Fixed It: I added more trade-in logistics examples to the RAG vector index.
+
+5. Questions About Beta iOS Releases
+Frequency: 11% of classification errors.
+Example Query: "iOS 18 beta broke my carplay connection."
+Why it Failed: The RAG knowledge base contains documentation for official public software releases, so unreleased beta software lacks grounded articles.
+How I Fixed It: I updated the prompt instructions to direct beta software users to the official Apple Beta Feedback Assistant tool.
 
 ---
 
-## Section 9: Future Engineering Roadmap
+## Engineering Decision Log
 
-1. Multi-Label Classification: Upgrade the intent classifier to output probability distributions across multiple categories simultaneously, handling compound queries (such as billing disputes paired with password lockouts) correctly.
-2. Hybrid Sparse-Dense Vector Search: Combine lexical TF-IDF indexing with dense vector embeddings to improve semantic retrieval accuracy on misspelled or poorly phrased customer queries.
-3. Conformal Prediction Thresholds: Implement conformal prediction techniques to establish mathematical guarantees on auto-resolution safety thresholds.
-4. Specialist Co-Pilot Workflows: Expand the admin dashboard to enable one-click execution of verified diagnostic actions with complete audit logging.
+1. Selected @AppleSupport Dataset: Apple had the highest volume of tweets (~180k) in the dataset, covering a rich mix of software, hardware, billing, and security queries.
+2. Settled on 7 Intent Classes: 3 classes is too broad for routing, while 30 classes leads to overfitting on noisy tweets. 7 classes match real Apple support departments well.
+3. Used TF-IDF Indexing for RAG: TF-IDF runs with zero GPU dependencies, indexes in under 100 ms, and works reliably on any machine.
+4. Built a 4-Tier Guardrail Engine: Instead of simple binary escalation, the SUGGEST tier creates human-reviewable drafts for 60% of technical queries safely.
+5. Hand-Labelled 150 Stratified Examples: A balanced 150-sample dataset provided clearer insights than 500 unverified raw tweets.
+6. Split Gemini Models for Production vs Evaluation: Gemini Flash handles live chat with sub-second latency, while Gemini Pro runs offline quality evaluation.
+7. Included Keyword Fallback Rules: I added rule-based fallback logic so reviewers can test the application even without an active API key.
+8. Hardcoded Physical Safety Rules: Overheating or swelling battery queries immediately trigger FLAG_URGENT status regardless of model confidence.
+9. Filtered RAG Results at 0.65 Cosine Similarity: Low similarity matches introduced noise, so queries below 0.65 default to core instructions.
+10. Built a Visual React Dashboard: Recharts components make metrics, radar charts, and confusion matrices easy to explore interactively.
+11. Separated Intent Classification from Escalation Rules: Intent identifies the topic while escalation handles risk and frustration. Decoupling them lets me update safety rules independently.
+12. Used a Unified Single-Service Setup for Render: Serving the React build directly from Express eliminated CORS issues and simplified cloud deployment.
+13. Added Multi-Language UI Support: Included interface language toggles (English, Spanish, French, Japanese, Hindi) for international testing.
+14. Used Native Browser Speech APIs: Built voice input and Siri read-aloud using native Web Speech APIs without adding heavy external dependencies.
+15. Created PDF and Word Export Utilities: Added automated scripts to generate clean Word and PDF document reports from project documentation.
 
 ---
 
-## Section 10: Repository Structure
+## What I Would Do Next With One More Week
 
-- backend/ - Node.js and Express API server handling classification, RAG, and escalation.
-- frontend/ - React and Vite user interface built with Apple HIG light theme styling.
-- data/ - Dataset files including sample_500.json, golden_set_150.json, and saved metrics.
-- data_pipeline/ - Python evaluation harness and dataset processing scripts.
-- package.json - Monorepo root build script for 1-click cloud deployment.
-- render.yaml - Render Blueprint deployment configuration.
-- README.md - Main technical documentation and report.
-- Apple_Customer_Support_Assistant_Report.docx - Word Document report artifact.
-- Apple_Customer_Support_Assistant_Report.pdf - Printable PDF report artifact.
+1. Multi-Label Classification: I would upgrade the classifier to support multiple labels at once so compound requests (like billing issues combined with password lockouts) are handled properly.
+2. Hybrid Sparse-Dense RAG Search: I would combine TF-IDF keyword search with dense vector embeddings to handle misspelled words and awkward customer phrasing better.
+3. Conformal Prediction Thresholds: I would implement conformal prediction techniques to provide mathematical confidence guarantees for auto-resolved queries.
+4. Specialist Co-Pilot Tools: I would expand the admin dashboard to allow support agents to execute verified diagnostic fixes with one click.
+
+---
+
+## Repository Structure
+
+- backend/ - Express server handling classification, RAG retrieval, and escalation logic.
+- frontend/ - React interface styled with an Apple HIG light theme.
+- data/ - Dataset files including sample_500.json, golden_set_150.json, and evaluation results.
+- data_pipeline/ - Python scripts for dataset sampling, RAG indexing, and evaluation.
+- package.json - Monorepo root build script for deployment.
+- render.yaml - Render Blueprint deployment file.
+- README.md - Primary documentation and project report.
+- Apple_Customer_Support_Assistant_Report.docx - Word document report.
+- Apple_Customer_Support_Assistant_Report.pdf - PDF version of the technical report.
