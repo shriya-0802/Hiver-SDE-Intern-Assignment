@@ -47,22 +47,19 @@ router.post('/respond', async (req, res) => {
       escalation.reasons.unshift('💜 High Empathy Policy Mode: Routing draft to agent for human personal touch');
     }
 
-    // Step 5: Create Human Review Ticket for non-autoresolve queries
-    let ticket = null;
-    if (['SUGGEST', 'ESCALATE', 'FLAG'].includes(escalation.tier)) {
-      ticket = createTicket({
-        customerHandle: req.body.customerHandle || '@apple_customer',
-        message: trimmedMessage,
-        intent: classification.intent,
-        confidence: classification.confidence,
-        escalationTier: escalation.tier,
-        escalationLabel: escalation.label,
-        escalationColor: escalation.color,
-        escalationReason: escalation.reasons?.[0] || 'Human review required',
-        aiProposedDraft: replyData.reply,
-        sentimentPulse: escalation.sentimentPulse
-      });
-    }
+    // Step 5: Record query ticket in Store (both auto-resolved and admin-review)
+    const ticket = createTicket({
+      customerHandle: req.body.customerHandle || '@alex_apple_user',
+      message: trimmedMessage,
+      intent: classification.intent,
+      confidence: classification.confidence,
+      escalationTier: escalation.tier,
+      escalationLabel: escalation.label,
+      escalationColor: escalation.color,
+      escalationReason: escalation.reasons?.[0] || 'Processed by Apple AI Agent',
+      aiProposedDraft: replyData.reply,
+      sentimentPulse: escalation.sentimentPulse
+    });
 
     // Step 6: LLM Judge
     let judgeScore = null;
@@ -105,6 +102,35 @@ router.post('/respond', async (req, res) => {
     console.error('[Agent Route] Error:', error);
     res.status(500).json({ error: 'Internal server error', details: error.message });
   }
+});
+
+// GET /api/agent/user-queries — list all user queries with evaluation % & admin resolution status
+router.get('/user-queries', (req, res) => {
+  const { getTickets } = require('../services/ticketStore');
+  const all = getTickets();
+  res.json({
+    total: all.length,
+    queries: all.map(t => ({
+      id: t.id,
+      customerHandle: t.customerHandle,
+      message: t.message,
+      intent: t.intent,
+      confidence: t.confidence,
+      evalScorePct: t.evalScorePct || Math.round((t.confidence || 0.85) * 100),
+      escalationTier: t.escalationTier,
+      escalationLabel: t.escalationLabel,
+      escalationColor: t.escalationColor,
+      status: t.status,
+      isResolvedByAdmin: ['APPROVED', 'MODIFIED', 'REJECTED'].includes(t.status),
+      isAutoResolved: t.status === 'AUTO_RESOLVED',
+      isPendingAdmin: t.status === 'PENDING_REVIEW',
+      aiProposedDraft: t.aiProposedDraft,
+      finalReply: t.finalReply,
+      reviewedBy: t.reviewedBy,
+      reviewedAt: t.reviewedAt,
+      createdAt: t.createdAt
+    }))
+  });
 });
 
 // GET /api/agent/intents — list available intents

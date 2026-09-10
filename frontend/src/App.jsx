@@ -3,6 +3,7 @@ import ChatDemo from './components/ChatDemo';
 import EvalPanel from './components/EvalPanel';
 import AgentDashboard from './components/AgentDashboard';
 import AdminDashboard from './components/AdminDashboard';
+import UserQueriesPanel from './components/UserQueriesPanel';
 import LoginPage from './components/LoginPage';
 
 const API = 'http://localhost:3001';
@@ -45,11 +46,13 @@ export default function App() {
   // Define tabs based on logged-in role
   const userTabs = [
     { id: 'chat', label: '💬 Customer Live Chat', desc: 'Customer support interaction view' },
+    { id: 'queries', label: '📋 My Queries & Evaluation', desc: 'View all user queries, evaluation scores & admin resolution status' },
     { id: 'eval', label: '📊 Evaluation Suite', desc: 'Metrics, baselines & judge scores' },
   ];
 
   const adminTabs = [
     { id: 'admin', label: '🛡️ Admin Review Queue', desc: 'Human-in-the-Loop review console', badge: pendingCount },
+    { id: 'queries', label: '📋 User Queries & Status', desc: 'View all customer queries & evaluation percentages' },
     { id: 'eval', label: '📊 Evaluation Suite', desc: 'Metrics, baselines & judge scores' },
     { id: 'arch', label: '🏗️ Architecture Map', desc: 'Pipeline, intents & decisions' },
   ];
@@ -136,6 +139,7 @@ export default function App() {
       <main className="main">
         {activeTab === 'chat' && currentUser.role === 'user' && <ChatDemo currentUser={currentUser} />}
         {activeTab === 'admin' && currentUser.role === 'admin' && <AdminDashboard onTicketUpdate={setPendingCount} />}
+        {activeTab === 'queries' && <UserQueriesPanel />}
         {activeTab === 'eval' && <EvalPanel />}
         {activeTab === 'arch' && <AgentDashboard />}
       </main>
