@@ -170,6 +170,8 @@ export default function ChatDemo() {
         text: data.reply,
         intent: data.classification?.intent,
         confidence: data.classification?.confidence,
+        escalation: data.escalation,
+        ticket: data.ticket,
         time: new Date()
       };
       setMessages(prev => [...prev, botMsg]);
@@ -221,6 +223,12 @@ export default function ChatDemo() {
               </div>
               <div>
                 <div className="message-bubble">{m.text}</div>
+                {m.escalation && m.escalation.tier !== 'AUTO_RESOLVE' && (
+                  <div style={{ marginTop:6, padding:'6px 10px', borderRadius:6, background: `${m.escalation.color}15`, border: `1px solid ${m.escalation.color}40`, fontSize:11, color: m.escalation.color, display:'flex', alignItems:'center', gap:6 }}>
+                    <span>🛡️ Human Review Queue:</span>
+                    <strong>{m.escalation.label}</strong> — Sent to Admin Console for Specialist Approval {m.ticket ? `(${m.ticket.id})` : ''}
+                  </div>
+                )}
                 <div className="message-meta">
                   {m.intent && <IntentBadge intent={m.intent} />}
                   {m.confidence && <span style={{ marginLeft:6 }}>{Math.round(m.confidence*100)}% confident</span>}

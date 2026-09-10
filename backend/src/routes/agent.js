@@ -5,6 +5,7 @@ const { generateReply } = require('../services/llmClient');
 const { judgeReply } = require('../services/llmClient');
 const { determineEscalation } = require('../services/escalationEngine');
 const { retrieve } = require('../services/vectorStore');
+const { createTicket } = require('../services/ticketStore');
 
 // POST /api/agent/respond
 router.post('/respond', async (req, res) => {
@@ -46,7 +47,24 @@ router.post('/respond', async (req, res) => {
       escalation.reasons.unshift('💜 High Empathy Policy Mode: Routing draft to agent for human personal touch');
     }
 
-    // Step 5: LLM Judge (async, non-blocking for speed — returns estimate first)
+    // Step 5: Create Human Review Ticket for non-autoresolve queries
+    let ticket = null;
+    if (['SUGGEST', 'ESCALATE', 'FLAG'].includes(escalation.tier)) {
+      ticket = createTicket({
+        customerHandle: req.body.customerHandle || '@apple_customer',
+        message: trimmedMessage,
+        intent: classification.intent,
+        confidence: classification.confidence,
+        escalationTier: escalation.tier,
+        escalationLabel: escalation.label,
+        escalationColor: escalation.color,
+        escalationReason: escalation.reasons?.[0] || 'Human review required',
+        aiProposedDraft: replyData.reply,
+        sentimentPulse: escalation.sentimentPulse
+      });
+    }
+
+    // Step 6: LLM Judge
     let judgeScore = null;
     try {
       judgeScore = await judgeReply(trimmedMessage, classification.intent, replyData.reply, similarConvs);
@@ -75,6 +93,7 @@ router.post('/respond', async (req, res) => {
         }))
       },
       escalation,
+      ticket,
       judgeEvaluation: judgeScore,
       metadata: {
         processingTimeMs: processingTime,

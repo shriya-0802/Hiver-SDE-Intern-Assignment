@@ -3,7 +3,7 @@
     "totalEvaluated": 50,
     "intentAccuracy": 0.58,
     "escalationAccuracy": 0.8,
-    "evaluatedAt": "2026-09-09T16:31:59.614Z",
+    "evaluatedAt": "2026-09-10T09:24:50.625Z",
     "note": "Live benchmark complete across 50 golden set samples!"
   },
   "confusionMatrix": {

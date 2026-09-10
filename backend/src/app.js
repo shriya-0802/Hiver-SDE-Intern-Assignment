@@ -16,6 +16,7 @@ const morgan = require('morgan');
 const agentRoutes = require('./routes/agent');
 const evalRoutes = require('./routes/eval');
 const dataRoutes = require('./routes/data');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -29,6 +30,7 @@ app.use(morgan('dev'));
 app.use('/api/agent', agentRoutes);
 app.use('/api/eval', evalRoutes);
 app.use('/api/data', dataRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

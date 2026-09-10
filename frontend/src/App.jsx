@@ -1,16 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ChatDemo from './components/ChatDemo';
 import EvalPanel from './components/EvalPanel';
 import AgentDashboard from './components/AgentDashboard';
+import AdminDashboard from './components/AdminDashboard';
 
-const TABS = [
-  { id: 'chat', label: '💬 Live Demo', desc: 'Chat with the Apple AI agent' },
-  { id: 'eval', label: '📊 Evaluation', desc: 'Metrics, baselines & judge scores' },
-  { id: 'arch', label: '🏗️ Architecture', desc: 'Pipeline, intents & decisions' },
-];
+const API = 'http://localhost:3001';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('chat');
+  const [pendingCount, setPendingCount] = useState(3);
+
+  useEffect(() => {
+    const fetchPending = async () => {
+      try {
+        const r = await fetch(`${API}/api/admin/tickets`).then(res => res.json());
+        if (r.summary) setPendingCount(r.summary.pendingCount || 0);
+      } catch (e) {}
+    };
+    fetchPending();
+    const interval = setInterval(fetchPending, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const TABS = [
+    { id: 'chat', label: '💬 User Dashboard', desc: 'Customer live support chat' },
+    { id: 'admin', label: '🛡️ Admin Dashboard', desc: 'Human-in-the-Loop review queue', badge: pendingCount },
+    { id: 'eval', label: '📊 Evaluation', desc: 'Metrics, baselines & judge scores' },
+    { id: 'arch', label: '🏗️ Architecture', desc: 'Pipeline, intents & decisions' },
+  ];
 
   return (
     <div className="app">
@@ -20,7 +37,7 @@ export default function App() {
           <div className="header-logo">🍎</div>
           <div>
             <div className="header-title">Apple AI Support Agent</div>
-            <div className="header-subtitle">Hiver SDE Intern Assignment · Gemini + RAG + 4-Tier Escalation</div>
+            <div className="header-subtitle">Hiver SDE Intern Assignment · Dual Dashboards (User Chat + Admin Human Review)</div>
           </div>
         </div>
 
@@ -31,8 +48,22 @@ export default function App() {
               className={`nav-btn ${activeTab === tab.id ? 'active' : ''}`}
               onClick={() => setActiveTab(tab.id)}
               title={tab.desc}
+              style={{ position: 'relative' }}
             >
               {tab.label}
+              {tab.badge > 0 && (
+                <span style={{
+                  marginLeft: 6,
+                  padding: '2px 6px',
+                  borderRadius: 10,
+                  background: 'var(--red)',
+                  color: 'white',
+                  fontSize: 10,
+                  fontWeight: 700
+                }}>
+                  {tab.badge}
+                </span>
+              )}
             </button>
           ))}
         </nav>
@@ -46,6 +77,7 @@ export default function App() {
       {/* Main */}
       <main className="main">
         {activeTab === 'chat' && <ChatDemo />}
+        {activeTab === 'admin' && <AdminDashboard onTicketUpdate={setPendingCount} />}
         {activeTab === 'eval' && <EvalPanel />}
         {activeTab === 'arch' && <AgentDashboard />}
       </main>
@@ -60,8 +92,8 @@ export default function App() {
         fontSize: 12,
         color: 'var(--text-muted)',
       }}>
-        <span>Apple AI Support Agent · Hiver SDE Intern Assignment · Built with Gemini-1.5-Flash + Express + React</span>
-        <span>Dataset: Customer Support on Twitter (Kaggle) · Brand: Apple · 7 Intents · 4-Tier Escalation</span>
+        <span>Apple AI Support Agent · Hiver SDE Intern Assignment · Built with Gemini + Express + React</span>
+        <span>Dataset: Customer Support on Twitter (Kaggle) · Brand: Apple · Dual Dashboards · Human-in-the-Loop</span>
       </footer>
     </div>
   );
