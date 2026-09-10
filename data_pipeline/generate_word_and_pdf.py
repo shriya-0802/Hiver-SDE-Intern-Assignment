@@ -11,7 +11,7 @@ from docx.oxml.ns import qn
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable, PageBreak
+    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable
 )
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 
@@ -23,38 +23,38 @@ def set_cell_background(cell, fill_hex):
     shd.set(qn('w:fill'), fill_hex)
     tcPr.append(shd)
 
-def build_all_reports():
+def generate_official_documents():
     docx_path = "Apple_Customer_Support_Assistant_Report.docx"
     pdf_path = "Apple_Customer_Support_Assistant_Report.pdf"
 
-    # Read README.md
+    # Read official README.md
     with open("README.md", "r", encoding="utf-8") as f:
         readme_text = f.read()
 
     # 1. BUILD WORD DOCUMENT (.docx)
     doc = Document()
-    for section in doc.sections:
-        section.top_margin = Inches(1.0)
-        section.bottom_margin = Inches(1.0)
-        section.left_margin = Inches(1.0)
-        section.right_margin = Inches(1.0)
+    for s in doc.sections:
+        s.top_margin = Inches(0.9)
+        s.bottom_margin = Inches(0.9)
+        s.left_margin = Inches(0.9)
+        s.right_margin = Inches(0.9)
 
-    COLOR_PRIMARY = RGBColor(0, 113, 227)
-    COLOR_DARK = RGBColor(29, 29, 31)
-    COLOR_MUTED = RGBColor(110, 110, 115)
+    COLOR_PRIMARY = RGBColor(0, 113, 227)    # Apple Blue
+    COLOR_DARK = RGBColor(29, 29, 31)       # Charcoal
+    COLOR_MUTED = RGBColor(110, 110, 115)   # Muted Gray
 
     p_title = doc.add_paragraph()
     r_title = p_title.add_run("Apple Customer Support Assistant")
     r_title.font.name = 'Arial'
-    r_title.font.size = Pt(24)
+    r_title.font.size = Pt(22)
     r_title.font.bold = True
     r_title.font.color.rgb = COLOR_PRIMARY
     p_title.paragraph_format.space_after = Pt(4)
 
     p_sub = doc.add_paragraph()
-    r_sub = p_sub.add_run("Hiver SDE Intern Take-Home Assignment Technical Report\nAuthor: Shriya Mohanty | Repository: https://github.com/shriya-0802/Hiver-SDE-Intern-Assignment.git")
+    r_sub = p_sub.add_run("Hiver Software Development Engineer Intern Assignment Technical Report\nAuthor: Shriya Mohanty | Repository: https://github.com/shriya-0802/Hiver-SDE-Intern-Assignment.git")
     r_sub.font.name = 'Arial'
-    r_sub.font.size = Pt(11)
+    r_sub.font.size = Pt(10.5)
     r_sub.font.italic = True
     r_sub.font.color.rgb = COLOR_MUTED
     p_sub.paragraph_format.space_after = Pt(16)
@@ -70,10 +70,10 @@ def build_all_reports():
         h1 = doc.add_heading(level=1)
         h1_run = h1.add_run(header_title)
         h1_run.font.name = 'Arial'
-        h1_run.font.size = Pt(14)
+        h1_run.font.size = Pt(13.5)
         h1_run.font.bold = True
         h1_run.font.color.rgb = COLOR_PRIMARY
-        h1.paragraph_format.space_before = Pt(16)
+        h1.paragraph_format.space_before = Pt(14)
         h1.paragraph_format.space_after = Pt(6)
 
         in_table = False
@@ -92,7 +92,7 @@ def build_all_reports():
                 in_table = True
                 continue
             else:
-                if in_table and table_rows:
+                if in_table and table_rows and len(table_rows[0]) > 0:
                     num_rows = len(table_rows)
                     num_cols = len(table_rows[0])
                     tbl = doc.add_table(rows=num_rows, cols=num_cols)
@@ -101,27 +101,28 @@ def build_all_reports():
                     for r_idx, row_data in enumerate(table_rows):
                         row = tbl.rows[r_idx]
                         for c_idx, cell_value in enumerate(row_data):
-                            cell = row.cells[c_idx]
-                            cell.text = cell_value
-                            p = cell.paragraphs[0]
-                            p.paragraph_format.space_before = Pt(4)
-                            p.paragraph_format.space_after = Pt(4)
-                            
-                            for run in p.runs:
-                                run.font.name = 'Arial'
-                                run.font.size = Pt(9.5)
-                                if r_idx == 0:
-                                    run.font.bold = True
-                                    run.font.color.rgb = RGBColor(255, 255, 255)
-                                else:
-                                    run.font.color.rgb = COLOR_DARK
+                            if c_idx < len(row.cells):
+                                cell = row.cells[c_idx]
+                                cell.text = cell_value
+                                p = cell.paragraphs[0]
+                                p.paragraph_format.space_before = Pt(4)
+                                p.paragraph_format.space_after = Pt(4)
+                                
+                                for run in p.runs:
+                                    run.font.name = 'Arial'
+                                    run.font.size = Pt(9.5)
+                                    if r_idx == 0:
+                                        run.font.bold = True
+                                        run.font.color.rgb = RGBColor(255, 255, 255)
+                                    else:
+                                        run.font.color.rgb = COLOR_DARK
 
-                            if r_idx == 0:
-                                set_cell_background(cell, "0071E3")
-                            elif r_idx % 2 == 1:
-                                set_cell_background(cell, "F5F5F7")
-                            else:
-                                set_cell_background(cell, "FFFFFF")
+                                if r_idx == 0:
+                                    set_cell_background(cell, "0071E3")
+                                elif r_idx % 2 == 1:
+                                    set_cell_background(cell, "F5F5F7")
+                                else:
+                                    set_cell_background(cell, "FFFFFF")
 
                     doc.add_paragraph()
                     table_rows = []
@@ -132,10 +133,10 @@ def build_all_reports():
                 h2 = doc.add_heading(level=2)
                 h2_run = h2.add_run(sub_title)
                 h2_run.font.name = 'Arial'
-                h2_run.font.size = Pt(12)
+                h2_run.font.size = Pt(11.5)
                 h2_run.font.bold = True
                 h2_run.font.color.rgb = COLOR_DARK
-                h2.paragraph_format.space_before = Pt(12)
+                h2.paragraph_format.space_before = Pt(10)
                 h2.paragraph_format.space_after = Pt(4)
                 continue
 
@@ -147,7 +148,7 @@ def build_all_reports():
                 b_text = line_str.lstrip("-*0123456789. ").strip()
                 b_run = bullet_p.add_run(b_text)
                 b_run.font.name = 'Arial'
-                b_run.font.size = Pt(10)
+                b_run.font.size = Pt(9.5)
                 b_run.font.color.rgb = COLOR_DARK
                 bullet_p.paragraph_format.space_before = Pt(2)
                 bullet_p.paragraph_format.space_after = Pt(4)
@@ -156,12 +157,12 @@ def build_all_reports():
             p = doc.add_paragraph()
             p_run = p.add_run(line_str)
             p_run.font.name = 'Arial'
-            p_run.font.size = Pt(10)
+            p_run.font.size = Pt(9.5)
             p_run.font.color.rgb = COLOR_DARK
-            p.paragraph_format.space_before = Pt(3)
-            p.paragraph_format.space_after = Pt(5)
+            p.paragraph_format.space_before = Pt(2)
+            p.paragraph_format.space_after = Pt(4)
 
-        if in_table and table_rows:
+        if in_table and table_rows and len(table_rows[0]) > 0:
             num_rows = len(table_rows)
             num_cols = len(table_rows[0])
             tbl = doc.add_table(rows=num_rows, cols=num_cols)
@@ -169,26 +170,27 @@ def build_all_reports():
             for r_idx, row_data in enumerate(table_rows):
                 row = tbl.rows[r_idx]
                 for c_idx, cell_value in enumerate(row_data):
-                    cell = row.cells[c_idx]
-                    cell.text = cell_value
-                    p = cell.paragraphs[0]
-                    p.paragraph_format.space_before = Pt(4)
-                    p.paragraph_format.space_after = Pt(4)
-                    for run in p.runs:
-                        run.font.name = 'Arial'
-                        run.font.size = Pt(9.5)
-                        if r_idx == 0:
-                            run.font.bold = True
-                            run.font.color.rgb = RGBColor(255, 255, 255)
-                        else:
-                            run.font.color.rgb = COLOR_DARK
+                    if c_idx < len(row.cells):
+                        cell = row.cells[c_idx]
+                        cell.text = cell_value
+                        p = cell.paragraphs[0]
+                        p.paragraph_format.space_before = Pt(4)
+                        p.paragraph_format.space_after = Pt(4)
+                        for run in p.runs:
+                            run.font.name = 'Arial'
+                            run.font.size = Pt(9.5)
+                            if r_idx == 0:
+                                run.font.bold = True
+                                run.font.color.rgb = RGBColor(255, 255, 255)
+                            else:
+                                run.font.color.rgb = COLOR_DARK
 
-                    if r_idx == 0:
-                        set_cell_background(cell, "0071E3")
-                    elif r_idx % 2 == 1:
-                        set_cell_background(cell, "F5F5F7")
-                    else:
-                        set_cell_background(cell, "FFFFFF")
+                        if r_idx == 0:
+                            set_cell_background(cell, "0071E3")
+                        elif r_idx % 2 == 1:
+                            set_cell_background(cell, "F5F5F7")
+                        else:
+                            set_cell_background(cell, "FFFFFF")
 
             doc.add_paragraph()
             table_rows = []
@@ -217,16 +219,16 @@ def build_all_reports():
 
     title_style = ParagraphStyle('PdfTitle', parent=styles['Heading1'], fontName='Helvetica-Bold', fontSize=22, leading=26, textColor=PRIMARY_PDF, spaceAfter=4)
     sub_style = ParagraphStyle('PdfSub', parent=styles['Normal'], fontName='Helvetica-Oblique', fontSize=10.5, leading=14, textColor=MUTED_PDF, spaceAfter=14)
-    h1_style = ParagraphStyle('PdfH1', parent=styles['Heading1'], fontName='Helvetica-Bold', fontSize=14, leading=18, textColor=PRIMARY_PDF, spaceBefore=14, spaceAfter=8, keepWithNext=True)
-    h2_style = ParagraphStyle('PdfH2', parent=styles['Heading2'], fontName='Helvetica-Bold', fontSize=11.5, leading=15, textColor=DARK_PDF, spaceBefore=10, spaceAfter=6, keepWithNext=True)
+    h1_style = ParagraphStyle('PdfH1', parent=styles['Heading1'], fontName='Helvetica-Bold', fontSize=13.5, leading=17, textColor=PRIMARY_PDF, spaceBefore=14, spaceAfter=8, keepWithNext=True)
+    h2_style = ParagraphStyle('PdfH2', parent=styles['Heading2'], fontName='Helvetica-Bold', fontSize=11, leading=14, textColor=DARK_PDF, spaceBefore=10, spaceAfter=5, keepWithNext=True)
     body_style = ParagraphStyle('PdfBody', parent=styles['Normal'], fontName='Helvetica', fontSize=9.5, leading=14.5, textColor=DARK_PDF, spaceAfter=6)
     bullet_style = ParagraphStyle('PdfBullet', parent=body_style, leftIndent=14, firstLineIndent=-10, spaceAfter=4)
-    th_style = ParagraphStyle('PdfTh', fontName='Helvetica-Bold', fontSize=9, leading=11, textColor=colors.white)
+    th_style = ParagraphStyle('PdfTh', fontName='Helvetica-Bold', fontSize=8.5, leading=11, textColor=colors.white)
     tc_style = ParagraphStyle('PdfTc', fontName='Helvetica', fontSize=8.5, leading=11, textColor=DARK_PDF)
 
     pdf_story = []
     pdf_story.append(Paragraph("Apple Customer Support Assistant", title_style))
-    pdf_story.append(Paragraph("<b>Hiver SDE Intern Take-Home Assignment Technical Report</b><br/>Author: Shriya Mohanty | Repository: https://github.com/shriya-0802/Hiver-SDE-Intern-Assignment.git", sub_style))
+    pdf_story.append(Paragraph("<b>Hiver Software Development Engineer Intern Assignment Technical Report</b><br/>Author: Shriya Mohanty | Repository: https://github.com/shriya-0802/Hiver-SDE-Intern-Assignment.git", sub_style))
     pdf_story.append(HRFlowable(width="100%", thickness=1.5, color=PRIMARY_PDF, spaceAfter=12))
 
     for i, sec in enumerate(sections_text):
@@ -321,7 +323,7 @@ def build_all_reports():
             pdf_story.append(t)
             pdf_story.append(Spacer(1, 10))
 
-        pdf_story.append(Spacer(1, 12))
+        pdf_story.append(Spacer(1, 10))
 
     def add_header_footer(canvas, doc):
         canvas.saveState()
@@ -335,4 +337,4 @@ def build_all_reports():
     print(f"Successfully generated PDF Document: {pdf_path}")
 
 if __name__ == "__main__":
-    build_all_reports()
+    generate_official_documents()
