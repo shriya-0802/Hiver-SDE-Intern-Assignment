@@ -44,12 +44,13 @@ export default function App() {
 
   // Define tabs based on logged-in role
   const userTabs = [
-    { id: 'chat', label: '💬 Customer Live Chat', desc: 'Customer support interaction view' }
+    { id: 'chat', label: '💬 Customer Live Chat', desc: 'Customer support interaction view' },
+    { id: 'eval', label: '📊 Evaluation Suite', desc: 'Metrics, baselines & judge scores' },
+    { id: 'arch', label: '🏗️ Architecture Map', desc: 'Pipeline, intents & decisions' },
   ];
 
   const adminTabs = [
     { id: 'admin', label: '🛡️ Admin Review Queue', desc: 'Human-in-the-Loop review console', badge: pendingCount },
-    { id: 'chat', label: '💬 Live Support View', desc: 'Monitor customer support chat' },
     { id: 'eval', label: '📊 Evaluation Suite', desc: 'Metrics, baselines & judge scores' },
     { id: 'arch', label: '🏗️ Architecture Map', desc: 'Pipeline, intents & decisions' },
   ];
@@ -134,10 +135,10 @@ export default function App() {
 
       {/* Main */}
       <main className="main">
-        {activeTab === 'chat' && <ChatDemo currentUser={currentUser} />}
+        {activeTab === 'chat' && currentUser.role === 'user' && <ChatDemo currentUser={currentUser} />}
         {activeTab === 'admin' && currentUser.role === 'admin' && <AdminDashboard onTicketUpdate={setPendingCount} />}
-        {activeTab === 'eval' && currentUser.role === 'admin' && <EvalPanel />}
-        {activeTab === 'arch' && currentUser.role === 'admin' && <AgentDashboard />}
+        {activeTab === 'eval' && <EvalPanel />}
+        {activeTab === 'arch' && <AgentDashboard />}
       </main>
 
       {/* Footer */}
