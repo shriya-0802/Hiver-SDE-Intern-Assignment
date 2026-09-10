@@ -187,6 +187,91 @@ export default function ChatDemo() {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
   };
 
+  const [speakingMsgId, setSpeakingMsgId] = useState(null);
+  const [isListening, setIsListening] = useState(false);
+  const [runningDiag, setRunningDiag] = useState(false);
+
+  const speakMessage = (msgId, text) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      if (speakingMsgId === msgId) {
+        setSpeakingMsgId(null);
+        return;
+      }
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      utterance.onend = () => setSpeakingMsgId(null);
+      utterance.onerror = () => setSpeakingMsgId(null);
+      setSpeakingMsgId(msgId);
+      window.speechSynthesis.speak(utterance);
+    } else {
+      alert('Speech synthesis is not supported in your browser.');
+    }
+  };
+
+  const startVoiceInput = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert('Voice Speech Recognition is not supported in this browser. Please try Google Chrome or Safari.');
+      return;
+    }
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.onstart = () => setIsListening(true);
+    recognition.onend = () => setIsListening(false);
+    recognition.onerror = () => setIsListening(false);
+    recognition.onresult = (e) => {
+      const transcript = e.results[0][0].transcript;
+      setInput(transcript);
+    };
+    recognition.start();
+  };
+
+  const runHardwareDiagnostics = () => {
+    setRunningDiag(true);
+    setTimeout(() => {
+      setRunningDiag(false);
+      const diagReport = "📱 Apple Hardware Diagnostic Report: iPhone 15 Pro (iOS 17.5.1)\n• Battery Health: 89% (184 cycles)\n• Bluetooth Module: Pass (-42 dBm RSSI)\n• Storage: 24.5 GB Available\n• Issue Detected: Background Battery Drain on iOS Update.";
+      send(diagReport);
+    }, 1500);
+  };
+
+  const [showGeniusModal, setShowGeniusModal] = useState(false);
+  const [showCareModal, setShowCareModal] = useState(false);
+  const [geniusBooking, setGeniusBooking] = useState(null);
+  const [selectedStore, setSelectedStore] = useState('Apple Store BKC (Mumbai)');
+  const [selectedDate, setSelectedDate] = useState('Tomorrow at 2:30 PM');
+  const [selectedCareDevice, setSelectedCareDevice] = useState('iPhone 15 Pro Max');
+  const [selectedDamage, setSelectedDamage] = useState('Cracked Screen');
+
+  const stores = [
+    'Apple Store BKC (Mumbai)',
+    'Apple Saket (New Delhi)',
+    'Apple Fifth Avenue (New York)',
+    'Apple Regent Street (London)',
+    'Apple Omotesando (Tokyo)',
+  ];
+
+  const damageCosts = {
+    'Cracked Screen': { care: '$29', standard: '$329' },
+    'Battery Replacement': { care: '$0 (100% covered)', standard: '$99' },
+    'Liquid / Water Damage': { care: '$99', standard: '$649' },
+    'Rear Glass Damage': { care: '$29', standard: '$199' },
+  };
+
+  const confirmGeniusBooking = () => {
+    const pass = {
+      id: 'GB-' + Math.floor(100000 + Math.random() * 900000),
+      store: selectedStore,
+      time: selectedDate,
+      device: selectedCareDevice,
+      code: 'AAPL-PASS-' + Math.random().toString(36).substring(2, 8).toUpperCase(),
+    };
+    setGeniusBooking(pass);
+    send(`📅 Booked Apple Genius Bar Appointment at ${selectedStore} for ${selectedDate} (Pass ID: ${pass.id}).`);
+  };
+
   return (
     <div style={{ display:'flex', gap:24, flex:1, minHeight:0 }}>
       {/* Chat Column */}
@@ -197,7 +282,55 @@ export default function ChatDemo() {
             <div className="agent-name">Apple Support AI</div>
             <div className="agent-desc">Powered by Gemini + RAG · 7 Intent Classes</div>
           </div>
-          <div className="agent-live"><div className="status-dot" /> Live</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginLeft: 'auto', flexWrap: 'wrap' }}>
+            <button
+              onClick={() => setShowCareModal(true)}
+              style={{
+                padding: '4px 8px',
+                background: 'rgba(16, 185, 129, 0.1)',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+                borderRadius: 12,
+                color: '#10b981',
+                fontSize: 11,
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}>
+              🏷️ AppleCare+ Cost
+            </button>
+            <button
+              onClick={() => setShowGeniusModal(true)}
+              style={{
+                padding: '4px 8px',
+                background: 'rgba(245, 158, 11, 0.1)',
+                border: '1px solid rgba(245, 158, 11, 0.3)',
+                borderRadius: 12,
+                color: '#f59e0b',
+                fontSize: 11,
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}>
+              📍 Book Genius Bar
+            </button>
+            <button
+              onClick={runHardwareDiagnostics}
+              disabled={runningDiag}
+              style={{
+                padding: '4px 8px',
+                background: runningDiag ? 'rgba(0,113,227,0.1)' : 'rgba(0,113,227,0.12)',
+                border: '1px solid rgba(0,113,227,0.3)',
+                borderRadius: 12,
+                color: 'var(--accent)',
+                fontSize: 11,
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 4
+              }}>
+              {runningDiag ? '⚙️ Scanning…' : '⚡ Run Diag'}
+            </button>
+            <div className="agent-live"><div className="status-dot" /> Live</div>
+          </div>
         </div>
 
         <div style={{ padding:'8px 16px', background:'rgba(255,255,255,0.03)', borderBottom:'1px solid var(--border)', display:'flex', alignItems:'center', justifyContent:'space-between', fontSize:12 }}>
@@ -222,7 +355,24 @@ export default function ChatDemo() {
                 {m.role === 'user' ? '👤' : '📱'}
               </div>
               <div>
-                <div className="message-bubble">{m.text}</div>
+                <div className="message-bubble" style={{ position: 'relative' }}>
+                  {m.text}
+                  {m.role === 'bot' && (
+                    <button
+                      onClick={() => speakMessage(m.id, m.text)}
+                      title="Read answer aloud with Siri Voice"
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontSize: 12,
+                        marginLeft: 8,
+                        opacity: speakingMsgId === m.id ? 1 : 0.6
+                      }}>
+                      {speakingMsgId === m.id ? '🔊 Speaking…' : '🔊'}
+                    </button>
+                  )}
+                </div>
                 {m.escalation && m.escalation.tier !== 'AUTO_RESOLVE' && (
                   <div style={{ marginTop:6, padding:'6px 10px', borderRadius:6, background: `${m.escalation.color}15`, border: `1px solid ${m.escalation.color}40`, fontSize:11, color: m.escalation.color, display:'flex', alignItems:'center', gap:6 }}>
                     <span>🛡️ Human Review Queue:</span>
@@ -258,12 +408,30 @@ export default function ChatDemo() {
             <textarea
               ref={textareaRef}
               className="chat-textarea"
-              placeholder="Describe your Apple support issue…"
+              placeholder={isListening ? "🎙️ Listening to your voice..." : "Describe your Apple support issue or click 🎙️ voice input..."}
               value={input}
               onChange={e => { setInput(e.target.value); e.target.style.height='auto'; e.target.style.height=e.target.scrollHeight+'px'; }}
               onKeyDown={handleKeyDown}
               rows={1}
             />
+            <button
+              onClick={startVoiceInput}
+              title="Voice Input (Speech-to-Text)"
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: 8,
+                background: isListening ? 'var(--red)' : '#ffffff',
+                border: '1px solid var(--border)',
+                color: isListening ? 'white' : 'var(--text-primary)',
+                fontSize: 14,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+              🎙️
+            </button>
             <button className="send-btn" onClick={() => send()} disabled={!input.trim() || loading}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
             </button>
@@ -389,6 +557,108 @@ export default function ChatDemo() {
           </>
         )}
       </div>
+
+      {/* Apple Genius Bar Booking Modal */}
+      {showGeniusModal && (
+        <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.5)', backdropFilter:'blur(4px)', zIndex:1000, display:'flex', alignItems:'center', justifyContent:'center' }}>
+          <div style={{ background:'var(--bg-card)', padding:24, borderRadius:16, width:440, maxWidth:'90%', border:'1px solid var(--border)', boxShadow:'0 20px 40px rgba(0,0,0,0.15)' }}>
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16 }}>
+              <h3 style={{ margin:0, fontSize:18, fontWeight:700, color:'var(--text-primary)' }}>📍 Apple Genius Bar Reservation</h3>
+              <button onClick={() => { setShowGeniusModal(false); setGeniusBooking(null); }} style={{ background:'none', border:'none', fontSize:18, cursor:'pointer', color:'var(--text-muted)' }}>✕</button>
+            </div>
+
+            {!geniusBooking ? (
+              <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+                <div>
+                  <label style={{ fontSize:12, fontWeight:600, color:'var(--text-secondary)', display:'block', marginBottom:6 }}>Select Apple Store Location</label>
+                  <select value={selectedStore} onChange={e => setSelectedStore(e.target.value)} style={{ width:'100%', padding:'10px 12px', borderRadius:8, border:'1px solid var(--border)', background:'var(--bg-primary)', color:'var(--text-primary)', fontSize:13 }}>
+                    {stores.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize:12, fontWeight:600, color:'var(--text-secondary)', display:'block', marginBottom:6 }}>Select Time Slot</label>
+                  <select value={selectedDate} onChange={e => setSelectedDate(e.target.value)} style={{ width:'100%', padding:'10px 12px', borderRadius:8, border:'1px solid var(--border)', background:'var(--bg-primary)', color:'var(--text-primary)', fontSize:13 }}>
+                    <option value="Today at 4:30 PM">Today at 4:30 PM</option>
+                    <option value="Tomorrow at 10:00 AM">Tomorrow at 10:00 AM</option>
+                    <option value="Tomorrow at 2:30 PM">Tomorrow at 2:30 PM</option>
+                    <option value="Saturday at 11:15 AM">Saturday at 11:15 AM</option>
+                  </select>
+                </div>
+                <div style={{ padding:12, background:'rgba(0,113,227,0.06)', borderRadius:10, border:'1px solid rgba(0,113,227,0.2)', fontSize:12, color:'var(--accent)' }}>
+                  💡 An Apple Genius specialist will examine your device and offer on-site repairs or express replacement.
+                </div>
+                <button onClick={confirmGeniusBooking} style={{ padding:'12px', borderRadius:10, background:'var(--accent)', color:'white', border:'none', fontWeight:700, fontSize:14, cursor:'pointer' }}>
+                  Confirm & Generate Apple Pass Ticket
+                </button>
+              </div>
+            ) : (
+              <div style={{ textAlignment:'center' }}>
+                <div style={{ padding:16, background:'linear-gradient(135deg, #0071e3 0%, #42a5f5 100%)', color:'white', borderRadius:14, marginBottom:16, boxShadow:'0 10px 20px rgba(0,113,227,0.25)' }}>
+                  <div style={{ fontSize:12, letterSpacing:1, opacity:0.9, textTransform:'uppercase', fontWeight:700 }}> Genius Bar Pass</div>
+                  <div style={{ fontSize:20, fontWeight:800, margin:'8px 0 4px 0' }}>{geniusBooking.id}</div>
+                  <div style={{ fontSize:13, opacity:0.95 }}>{geniusBooking.store}</div>
+                  <div style={{ fontSize:13, opacity:0.95, marginTop:4 }}>🗓️ {geniusBooking.time}</div>
+                  <div style={{ marginTop:14, background:'white', padding:8, borderRadius:8, display:'inline-block' }}>
+                    <span style={{ fontFamily:'monospace', fontWeight:800, color:'#0071e3', fontSize:14 }}>{geniusBooking.code}</span>
+                  </div>
+                </div>
+                <button onClick={() => { setShowGeniusModal(false); setGeniusBooking(null); }} style={{ width:'100%', padding:'10px', borderRadius:8, background:'var(--bg-primary)', border:'1px solid var(--border)', fontWeight:600, color:'var(--text-primary)', cursor:'pointer' }}>
+                  Close Pass
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* AppleCare+ & Cost Estimator Modal */}
+      {showCareModal && (
+        <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.5)', backdropFilter:'blur(4px)', zIndex:1000, display:'flex', alignItems:'center', justifyContent:'center' }}>
+          <div style={{ background:'var(--bg-card)', padding:24, borderRadius:16, width:460, maxWidth:'90%', border:'1px solid var(--border)', boxShadow:'0 20px 40px rgba(0,0,0,0.15)' }}>
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16 }}>
+              <h3 style={{ margin:0, fontSize:18, fontWeight:700, color:'var(--text-primary)' }}>🏷️ AppleCare+ Repair Cost Estimator</h3>
+              <button onClick={() => setShowCareModal(false)} style={{ background:'none', border:'none', fontSize:18, cursor:'pointer', color:'var(--text-muted)' }}>✕</button>
+            </div>
+
+            <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+              <div>
+                <label style={{ fontSize:12, fontWeight:600, color:'var(--text-secondary)', display:'block', marginBottom:6 }}>Select Apple Device Model</label>
+                <select value={selectedCareDevice} onChange={e => setSelectedCareDevice(e.target.value)} style={{ width:'100%', padding:'10px 12px', borderRadius:8, border:'1px solid var(--border)', background:'var(--bg-primary)', color:'var(--text-primary)', fontSize:13 }}>
+                  <option value="iPhone 15 Pro Max">iPhone 15 Pro Max</option>
+                  <option value="MacBook Pro 16-inch (M3 Max)">MacBook Pro 16-inch (M3 Max)</option>
+                  <option value="iPad Pro 13-inch (M4)">iPad Pro 13-inch (M4)</option>
+                  <option value="Apple Watch Ultra 2">Apple Watch Ultra 2</option>
+                </select>
+              </div>
+              <div>
+                <label style={{ fontSize:12, fontWeight:600, color:'var(--text-secondary)', display:'block', marginBottom:6 }}>Select Issue / Damage Type</label>
+                <select value={selectedDamage} onChange={e => setSelectedDamage(e.target.value)} style={{ width:'100%', padding:'10px 12px', borderRadius:8, border:'1px solid var(--border)', background:'var(--bg-primary)', color:'var(--text-primary)', fontSize:13 }}>
+                  <option value="Cracked Screen">Cracked Screen</option>
+                  <option value="Battery Replacement">Battery Degradation (&lt;80% capacity)</option>
+                  <option value="Liquid / Water Damage">Liquid / Accidental Water Damage</option>
+                  <option value="Rear Glass Damage">Back Glass Damage</option>
+                </select>
+              </div>
+
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginTop:8 }}>
+                <div style={{ padding:14, borderRadius:12, background:'rgba(16,185,129,0.08)', border:'1px solid rgba(16,185,129,0.3)', textAlign:'center' }}>
+                  <div style={{ fontSize:11, color:'var(--text-muted)', fontWeight:600 }}>With AppleCare+</div>
+                  <div style={{ fontSize:22, fontWeight:800, color:'#10b981', marginTop:4 }}>{damageCosts[selectedDamage]?.care}</div>
+                </div>
+                <div style={{ padding:14, borderRadius:12, background:'rgba(239,68,68,0.08)', border:'1px solid rgba(239,68,68,0.3)', textAlign:'center' }}>
+                  <div style={{ fontSize:11, color:'var(--text-muted)', fontWeight:600 }}>Out of Warranty</div>
+                  <div style={{ fontSize:22, fontWeight:800, color:'#ef4444', marginTop:4 }}>{damageCosts[selectedDamage]?.standard}</div>
+                </div>
+              </div>
+
+              <button onClick={() => { send(`I'd like to check AppleCare+ coverage for my ${selectedCareDevice} with ${selectedDamage}.`); setShowCareModal(false); }} style={{ padding:'12px', borderRadius:10, background:'var(--accent)', color:'white', border:'none', fontWeight:700, fontSize:14, cursor:'pointer' }}>
+                Ask AI Assistant About This Repair
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
