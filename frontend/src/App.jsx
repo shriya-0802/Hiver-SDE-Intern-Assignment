@@ -46,7 +46,6 @@ export default function App() {
   const userTabs = [
     { id: 'chat', label: '💬 Customer Live Chat', desc: 'Customer support interaction view' },
     { id: 'eval', label: '📊 Evaluation Suite', desc: 'Metrics, baselines & judge scores' },
-    { id: 'arch', label: '🏗️ Architecture Map', desc: 'Pipeline, intents & decisions' },
   ];
 
   const adminTabs = [
