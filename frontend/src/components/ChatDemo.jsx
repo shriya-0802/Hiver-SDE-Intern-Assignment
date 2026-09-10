@@ -239,11 +239,43 @@ export default function ChatDemo() {
 
   const [showGeniusModal, setShowGeniusModal] = useState(false);
   const [showCareModal, setShowCareModal] = useState(false);
+  const [showTradeInModal, setShowTradeInModal] = useState(false);
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [language, setLanguage] = useState('en');
   const [geniusBooking, setGeniusBooking] = useState(null);
   const [selectedStore, setSelectedStore] = useState('Apple Store BKC (Mumbai)');
   const [selectedDate, setSelectedDate] = useState('Tomorrow at 2:30 PM');
   const [selectedCareDevice, setSelectedCareDevice] = useState('iPhone 15 Pro Max');
   const [selectedDamage, setSelectedDamage] = useState('Cracked Screen');
+  const [tradeInDevice, setTradeInDevice] = useState('iPhone 13 Pro (128GB)');
+
+  const tradeInValues = {
+    'iPhone 14 Pro Max (256GB)': '$550 Credit',
+    'iPhone 13 Pro (128GB)': '$380 Credit',
+    'MacBook Air M1': '$420 Credit',
+    'iPad Air 5th Gen': '$280 Credit',
+    'Apple Watch Series 8': '$160 Credit'
+  };
+
+  const systemStatus = [
+    { name: 'iCloud Services', status: 'Operational', color: '#10b981', icon: '🟢' },
+    { name: 'Apple Pay & Wallet', status: 'Operational', color: '#10b981', icon: '🟢' },
+    { name: 'App Store & Subscriptions', status: 'Operational', color: '#10b981', icon: '🟢' },
+    { name: 'iMessage & FaceTime', status: 'Operational', color: '#10b981', icon: '🟢' },
+    { name: 'Apple Music & TV+', status: 'Operational', color: '#10b981', icon: '🟢' },
+  ];
+
+  const translations = {
+    en: { title: 'Apple Support AI', desc: 'Powered by Gemini + RAG · 7 Intent Classes', placeholder: 'Describe your Apple support issue or click 🎙️ voice input...' },
+    es: { title: 'Soporte Técnico de Apple AI', desc: 'Desarrollado con Gemini + RAG', placeholder: 'Describa su problema o use la entrada de voz 🎙️...' },
+    fr: { title: 'Assistance Apple AI', desc: 'Alimenté par Gemini + RAG', placeholder: 'Décrivez votre problème ou cliquez sur la saisie vocale 🎙️...' },
+    ja: { title: 'Apple AI サポート', desc: 'Gemini + RAG 搭載', placeholder: '問題の内容を入力するか、音声入力 🎙️ をクリックしてください...' },
+    hi: { title: 'Apple AI सहायता', desc: 'Gemini + RAG द्वारा संचालित', placeholder: 'अपनी Apple समस्या का वर्णन करें या voice 🎙️ का उपयोग करें...' },
+  };
+
+  const rateMessage = (msgId, rating) => {
+    setMessages(prev => prev.map(m => m.id === msgId ? { ...m, rating } : m));
+  };
 
   const stores = [
     'Apple Store BKC (Mumbai)',
@@ -272,6 +304,11 @@ export default function ChatDemo() {
     send(`📅 Booked Apple Genius Bar Appointment at ${selectedStore} for ${selectedDate} (Pass ID: ${pass.id}).`);
   };
 
+  const requestTradeInKit = () => {
+    send(`🔄 Requested Apple Trade-In Shipping Kit for ${tradeInDevice} (Estimated value: ${tradeInValues[tradeInDevice]}).`);
+    setShowTradeInModal(false);
+  };
+
   return (
     <div style={{ display:'flex', gap:24, flex:1, minHeight:0 }}>
       {/* Chat Column */}
@@ -279,10 +316,59 @@ export default function ChatDemo() {
         <div className="agent-header">
           <div className="agent-avatar">📱</div>
           <div>
-            <div className="agent-name">Apple Support AI</div>
-            <div className="agent-desc">Powered by Gemini + RAG · 7 Intent Classes</div>
+            <div className="agent-name">{translations[language]?.title}</div>
+            <div className="agent-desc">{translations[language]?.desc}</div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginLeft: 'auto', flexWrap: 'wrap' }}>
+            <button
+              onClick={() => setShowStatusModal(true)}
+              title="Live Apple System Status"
+              style={{
+                padding: '4px 8px',
+                background: 'rgba(16, 185, 129, 0.1)',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+                borderRadius: 12,
+                color: '#10b981',
+                fontSize: 11,
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}>
+              🟢 Apple Services Operational
+            </button>
+
+            <select
+              value={language}
+              onChange={e => setLanguage(e.target.value)}
+              style={{
+                padding: '3px 6px',
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border)',
+                borderRadius: 10,
+                color: 'var(--text-primary)',
+                fontSize: 11,
+                cursor: 'pointer'
+              }}>
+              <option value="en">🇺🇸 EN</option>
+              <option value="es">🇪🇸 ES</option>
+              <option value="fr">🇫🇷 FR</option>
+              <option value="ja">🇯🇵 JA</option>
+              <option value="hi">🇮🇳 HI</option>
+            </select>
+
+            <button
+              onClick={() => setShowTradeInModal(true)}
+              style={{
+                padding: '4px 8px',
+                background: 'rgba(139, 92, 246, 0.1)',
+                border: '1px solid rgba(139, 92, 246, 0.3)',
+                borderRadius: 12,
+                color: '#8b5cf6',
+                fontSize: 11,
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}>
+              🔄 Trade-In Kit
+            </button>
             <button
               onClick={() => setShowCareModal(true)}
               style={{
@@ -295,7 +381,7 @@ export default function ChatDemo() {
                 fontWeight: 600,
                 cursor: 'pointer',
               }}>
-              🏷️ AppleCare+ Cost
+              🏷️ Care+ Cost
             </button>
             <button
               onClick={() => setShowGeniusModal(true)}
@@ -309,7 +395,7 @@ export default function ChatDemo() {
                 fontWeight: 600,
                 cursor: 'pointer',
               }}>
-              📍 Book Genius Bar
+              📍 Genius Bar
             </button>
             <button
               onClick={runHardwareDiagnostics}
@@ -327,9 +413,8 @@ export default function ChatDemo() {
                 alignItems: 'center',
                 gap: 4
               }}>
-              {runningDiag ? '⚙️ Scanning…' : '⚡ Run Diag'}
+              {runningDiag ? '⚙️ Scanning…' : '⚡ Diag'}
             </button>
-            <div className="agent-live"><div className="status-dot" /> Live</div>
           </div>
         </div>
 
@@ -373,6 +458,29 @@ export default function ChatDemo() {
                     </button>
                   )}
                 </div>
+                {m.role === 'bot' && (
+                  <div style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--text-muted)' }}>
+                    <span>Was this helpful?</span>
+                    {[1, 2, 3, 4, 5].map(star => (
+                      <button
+                        key={star}
+                        onClick={() => rateMessage(m.id, star)}
+                        title={`Rate ${star} stars`}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          padding: 0,
+                          fontSize: 12,
+                          filter: (m.rating || 0) >= star ? 'none' : 'grayscale(100%) opacity(0.4)',
+                          transition: 'transform 0.1s ease'
+                        }}>
+                        ⭐
+                      </button>
+                    ))}
+                    {m.rating && <span style={{ fontWeight: 600, color: 'var(--accent)', marginLeft: 4 }}>{m.rating}/5</span>}
+                  </div>
+                )}
                 {m.escalation && m.escalation.tier !== 'AUTO_RESOLVE' && (
                   <div style={{ marginTop:6, padding:'6px 10px', borderRadius:6, background: `${m.escalation.color}15`, border: `1px solid ${m.escalation.color}40`, fontSize:11, color: m.escalation.color, display:'flex', alignItems:'center', gap:6 }}>
                     <span>🛡️ Human Review Queue:</span>
@@ -658,7 +766,67 @@ export default function ChatDemo() {
           </div>
         </div>
       )}
+
+      {/* Apple System Status Modal */}
+      {showStatusModal && (
+        <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.5)', backdropFilter:'blur(4px)', zIndex:1000, display:'flex', alignItems:'center', justifyContent:'center' }}>
+          <div style={{ background:'var(--bg-card)', padding:24, borderRadius:16, width:440, maxWidth:'90%', border:'1px solid var(--border)', boxShadow:'0 20px 40px rgba(0,0,0,0.15)' }}>
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16 }}>
+              <h3 style={{ margin:0, fontSize:18, fontWeight:700, color:'var(--text-primary)' }}>🟢 Apple System Status Dashboard</h3>
+              <button onClick={() => setShowStatusModal(false)} style={{ background:'none', border:'none', fontSize:18, cursor:'pointer', color:'var(--text-muted)' }}>✕</button>
+            </div>
+
+            <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+              {systemStatus.map(s => (
+                <div key={s.name} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'10px 14px', borderRadius:10, background:'var(--bg-primary)', border:'1px solid var(--border)' }}>
+                  <span style={{ fontSize:13, fontWeight:600, color:'var(--text-primary)' }}>{s.name}</span>
+                  <span style={{ fontSize:12, fontWeight:700, color:s.color }}>{s.icon} {s.status}</span>
+                </div>
+              ))}
+            </div>
+
+            <button onClick={() => setShowStatusModal(false)} style={{ width:'100%', marginTop:16, padding:'10px', borderRadius:8, background:'var(--bg-primary)', border:'1px solid var(--border)', fontWeight:600, color:'var(--text-primary)', cursor:'pointer' }}>
+              Close System Dashboard
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Apple Trade-In Kit Estimator Modal */}
+      {showTradeInModal && (
+        <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.5)', backdropFilter:'blur(4px)', zIndex:1000, display:'flex', alignItems:'center', justifyContent:'center' }}>
+          <div style={{ background:'var(--bg-card)', padding:24, borderRadius:16, width:440, maxWidth:'90%', border:'1px solid var(--border)', boxShadow:'0 20px 40px rgba(0,0,0,0.15)' }}>
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16 }}>
+              <h3 style={{ margin:0, fontSize:18, fontWeight:700, color:'var(--text-primary)' }}>🔄 Apple Trade-In Estimator</h3>
+              <button onClick={() => setShowTradeInModal(false)} style={{ background:'none', border:'none', fontSize:18, cursor:'pointer', color:'var(--text-muted)' }}>✕</button>
+            </div>
+
+            <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+              <div>
+                <label style={{ fontSize:12, fontWeight:600, color:'var(--text-secondary)', display:'block', marginBottom:6 }}>Select Trade-In Device</label>
+                <select value={tradeInDevice} onChange={e => setTradeInDevice(e.target.value)} style={{ width:'100%', padding:'10px 12px', borderRadius:8, border:'1px solid var(--border)', background:'var(--bg-primary)', color:'var(--text-primary)', fontSize:13 }}>
+                  {Object.keys(tradeInValues).map(dev => <option key={dev} value={dev}>{dev}</option>)}
+                </select>
+              </div>
+
+              <div style={{ padding:16, borderRadius:12, background:'rgba(139,92,246,0.08)', border:'1px solid rgba(139,92,246,0.3)', textAlign:'center' }}>
+                <div style={{ fontSize:12, color:'var(--text-muted)', fontWeight:600 }}>Estimated Instant Apple Gift Card Credit</div>
+                <div style={{ fontSize:26, fontWeight:800, color:'#8b5cf6', marginTop:4 }}>{tradeInValues[tradeInDevice]}</div>
+              </div>
+
+              <div style={{ padding:10, background:'rgba(0,113,227,0.06)', borderRadius:8, border:'1px solid rgba(0,113,227,0.2)', fontSize:11, color:'var(--accent)' }}>
+                🚚 Free shipping box and prepaid label sent directly to your home.
+              </div>
+
+              <button onClick={requestTradeInKit} style={{ padding:'12px', borderRadius:10, background:'var(--accent)', color:'white', border:'none', fontWeight:700, fontSize:14, cursor:'pointer' }}>
+                Request Free Trade-In Shipping Kit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
 

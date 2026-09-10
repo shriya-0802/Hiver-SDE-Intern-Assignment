@@ -206,7 +206,20 @@ export default function AdminDashboard({ onTicketUpdate }) {
                             fontFamily: 'inherit'
                           }}
                         />
-                        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 8 }}>
+                          <button
+                            onClick={() => {
+                              const smartReplies = [
+                                `Hello! We've reviewed your request for ${t.intent.replace(/_/g, ' ')}. We've issued an immediate high-priority resolution and updated your device profile. Thank you for choosing Apple Support.`,
+                                `Thank you for reaching out to Apple Care. Our specialist team has verified your account status and applied an automatic correction. Your issue is fully resolved.`,
+                                `Apple Customer Care Update: We have prioritized your case ${t.id}. A specialist has validated the fix and updated our backend records for you.`
+                              ];
+                              const randomReply = smartReplies[Math.floor(Math.random() * smartReplies.length)];
+                              setModifiedText(randomReply);
+                            }}
+                            style={{ padding: '6px 12px', fontSize: 12, background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.3)', color: '#8b5cf6', borderRadius: 6, cursor: 'pointer', fontWeight: 600 }}>
+                            ✨ AI Smart Rewrite
+                          </button>
                           <button onClick={() => setEditingTicketId(null)} style={{ padding: '6px 12px', fontSize: 12, background: 'none', border: '1px solid var(--border)', color: 'var(--text-secondary)', borderRadius: 6, cursor: 'pointer' }}>
                             Cancel
                           </button>
