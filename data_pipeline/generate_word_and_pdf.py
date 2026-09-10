@@ -237,7 +237,7 @@ def generate_official_documents():
         lines = sec.strip().split("\n")
         header_title = lines[0].replace("#", "").strip()
 
-        pdf_story.append(Paragraph(f"## {header_title}", h1_style))
+        pdf_story.append(Paragraph(header_title, h1_style))
         pdf_story.append(HRFlowable(width="100%", thickness=0.5, color=BORDER_PDF, spaceAfter=8))
 
         in_table = False
