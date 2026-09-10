@@ -43,7 +43,7 @@ function ScoreRing({ value, max = 5, label, size = 120 }) {
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload?.length) {
     return (
-      <div style={{ background:'var(--bg-card)', border:'1px solid var(--border)', borderRadius:8, padding:'8px 12px', fontSize:12 }}>
+      <div style={{ background:'#ffffff', border:'1px solid rgba(0,0,0,0.1)', borderRadius:8, padding:'8px 12px', fontSize:12, boxShadow:'0 4px 12px rgba(0,0,0,0.08)' }}>
         <div style={{ color:'var(--text-secondary)', marginBottom:4 }}>{label}</div>
         {payload.map((p, i) => (
           <div key={i} style={{ color: p.color || 'var(--text-primary)', fontWeight:600 }}>
@@ -107,9 +107,9 @@ export default function EvalPanel() {
   }));
 
   const barData = [
-    { name: 'Trivial', accuracy: Math.round((baselines.trivialBaseline?.accuracy || 0.28) * 100), color: '#5a5a70' },
+    { name: 'Trivial', accuracy: Math.round((baselines.trivialBaseline?.accuracy || 0.28) * 100), color: '#86868b' },
     { name: 'Keyword', accuracy: Math.round((baselines.simpleBaseline?.accuracy || 0.61) * 100), color: '#f59e0b' },
-    { name: 'Our System', accuracy: Math.round((baselines.ourSystem?.accuracy || 0.79) * 100), color: '#6366f1' },
+    { name: 'Our System', accuracy: Math.round((baselines.ourSystem?.accuracy || 0.79) * 100), color: '#0071e3' },
   ];
 
   const exportPDF = () => {
@@ -464,17 +464,17 @@ export default function EvalPanel() {
         </div>
         <div style={{ display:'flex', gap:10 }}>
           <button onClick={exportPDF} disabled={!results} style={{
-            padding:'10px 16px', background:'rgba(255,255,255,0.06)',
+            padding:'10px 16px', background:'rgba(0,0,0,0.04)',
             border:'1px solid var(--border)', borderRadius:'var(--radius)', color:'var(--text-primary)', fontSize:13, fontWeight:600,
-            cursor: !results ? 'not-allowed' : 'pointer', fontFamily:'Inter, sans-serif'
+            cursor: !results ? 'not-allowed' : 'pointer', fontFamily:'inherit'
           }}>
             📄 Export Evaluation Report (PDF)
           </button>
           <button onClick={runEval} disabled={running} style={{
-            padding:'10px 20px', background: running ? 'var(--bg-card)' : 'linear-gradient(135deg, var(--accent), #4f46e5)',
+            padding:'10px 20px', background: running ? 'var(--bg-card)' : '#0071e3',
             border: running ? '1px solid var(--accent)' : 'none', borderRadius:'var(--radius)', color:'white', fontSize:13, fontWeight:600,
             cursor: running ? 'not-allowed' : 'pointer', opacity: running ? 0.8 : 1,
-            fontFamily:'Inter, sans-serif', display:'flex', alignItems:'center', gap:8
+            fontFamily:'inherit', display:'flex', alignItems:'center', gap:8, boxShadow: '0 2px 8px rgba(0,113,227,0.3)'
           }}>
             {running ? (
               <>
@@ -487,7 +487,7 @@ export default function EvalPanel() {
       </div>
 
       {running && (
-        <div style={{ padding:'12px 16px', background:'rgba(99,102,241,0.12)', border:'1px solid rgba(99,102,241,0.3)', borderRadius:'var(--radius)', marginBottom:20, fontSize:13, color:'var(--text-primary)', display:'flex', alignItems:'center', gap:12 }}>
+        <div style={{ padding:'12px 16px', background:'rgba(0,113,227,0.08)', border:'1px solid rgba(0,113,227,0.25)', borderRadius:'var(--radius)', marginBottom:20, fontSize:13, color:'var(--text-primary)', display:'flex', alignItems:'center', gap:12 }}>
           <div className="typing-dot" style={{ width:10, height:10, background:'var(--accent)' }} />
           <div>
             <strong>Evaluating Golden Set:</strong> Running 50 test interactions through Intent Classifier & 4-Tier Escalation Engine…
@@ -533,9 +533,9 @@ export default function EvalPanel() {
               <div className="card-title" style={{ marginBottom:16 }}>Intent F1 Radar</div>
               <ResponsiveContainer width="100%" height={220}>
                 <RadarChart data={radarData}>
-                  <PolarGrid stroke="rgba(255,255,255,0.05)" />
-                  <PolarAngleAxis dataKey="intent" tick={{ fill:'var(--text-muted)', fontSize:11 }} />
-                  <Radar name="F1 %" dataKey="F1" stroke="#6366f1" fill="#6366f1" fillOpacity={0.2} />
+                  <PolarGrid stroke="rgba(0,0,0,0.1)" />
+                  <PolarAngleAxis dataKey="intent" tick={{ fill:'var(--text-secondary)', fontSize:11 }} />
+                  <Radar name="F1 %" dataKey="F1" stroke="#0071e3" fill="#0071e3" fillOpacity={0.2} />
                 </RadarChart>
               </ResponsiveContainer>
             </div>
@@ -543,8 +543,8 @@ export default function EvalPanel() {
               <div className="card-title" style={{ marginBottom:16 }}>Baseline Comparison</div>
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={barData} margin={{ top:5, right:10, left:-20, bottom:5 }}>
-                  <XAxis dataKey="name" tick={{ fill:'var(--text-muted)', fontSize:11 }} />
-                  <YAxis tick={{ fill:'var(--text-muted)', fontSize:11 }} domain={[0,100]} />
+                  <XAxis dataKey="name" tick={{ fill:'var(--text-secondary)', fontSize:11 }} />
+                  <YAxis tick={{ fill:'var(--text-secondary)', fontSize:11 }} domain={[0,100]} />
                   <Tooltip content={<CustomTooltip />} />
                   <Bar dataKey="accuracy" name="Accuracy %" radius={[4,4,0,0]}>
                     {barData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
@@ -555,7 +555,7 @@ export default function EvalPanel() {
           </div>
 
           {results?.summary?.note && (
-            <div style={{ marginTop:16, padding:'12px 16px', background:'rgba(99,102,241,0.08)', border:'1px solid rgba(99,102,241,0.2)', borderRadius:'var(--radius)', fontSize:12, color:'var(--text-secondary)' }}>
+            <div style={{ marginTop:16, padding:'12px 16px', background:'rgba(0,113,227,0.06)', border:'1px solid rgba(0,113,227,0.18)', borderRadius:'var(--radius)', fontSize:12, color:'var(--text-secondary)' }}>
               ℹ️ {results.summary.note}
             </div>
           )}

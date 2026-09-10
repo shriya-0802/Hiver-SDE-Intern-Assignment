@@ -42,13 +42,13 @@ export default function AgentDashboard() {
         <div className="card-title" style={{ marginBottom:20 }}>Processing Pipeline</div>
         <div style={{ display:'flex', alignItems:'center', gap:8, overflowX:'auto', paddingBottom:8 }}>
           {[
-            { icon:'📨', label:'Customer Message', color:'#6366f1' },
+            { icon:'📨', label:'Customer Message', color:'#0071e3' },
             { icon:'🧠', label:'Intent Classify', sub:'Gemini-1.5-Flash', color:'#8b5cf6' },
-            { icon:'🔍', label:'RAG Retrieve', sub:'TF-IDF · Top-5', color:'#06b6d4' },
-            { icon:'✍️', label:'Reply Generate', sub:'Gemini + Context', color:'#10b981' },
-            { icon:'⚖️', label:'Escalation', sub:'4-Tier Engine', color:'#f97316' },
-            { icon:'🏛️', label:'LLM Judge', sub:'Gemini-1.5-Pro', color:'#f59e0b' },
-            { icon:'📤', label:'Response', color:'#22c55e' },
+            { icon:'🔍', label:'RAG Retrieve', sub:'TF-IDF · Top-5', color:'#0284c7' },
+            { icon:'✍️', label:'Reply Generate', sub:'Gemini + Context', color:'#059669' },
+            { icon:'⚖️', label:'Escalation', sub:'4-Tier Engine', color:'#ea580c' },
+            { icon:'🏛️', label:'LLM Judge', sub:'Gemini-1.5-Pro', color:'#d97706' },
+            { icon:'📤', label:'Response', color:'#16a34a' },
           ].map((step, i, arr) => (
             <div key={i} style={{ display:'flex', alignItems:'center', gap:8, flexShrink:0 }}>
               <div style={{

@@ -114,7 +114,7 @@ export default function UserQueriesPanel() {
             onClick={fetchQueries}
             style={{
               padding: '8px 14px',
-              background: 'rgba(255,255,255,0.06)',
+              background: '#ffffff',
               border: '1px solid var(--border)',
               borderRadius: 'var(--radius)',
               color: 'var(--text-primary)',
@@ -123,7 +123,8 @@ export default function UserQueriesPanel() {
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: 6
+              gap: 6,
+              boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
             }}>
             🔄 Refresh Status
           </button>
@@ -141,7 +142,7 @@ export default function UserQueriesPanel() {
           <div className="metric-label">Avg Eval Score</div>
         </div>
         <div className="metric-card">
-          <div className="metric-value" style={{ color: '#22c55e' }}>{autoCount}</div>
+          <div className="metric-value" style={{ color: '#10b981' }}>{autoCount}</div>
           <div className="metric-label">🤖 Auto-Resolved</div>
         </div>
         <div className="metric-card">
@@ -172,7 +173,7 @@ export default function UserQueriesPanel() {
                 fontSize: 12,
                 fontWeight: 600,
                 border: filter === f.id ? '1px solid var(--accent)' : '1px solid var(--border)',
-                background: filter === f.id ? 'rgba(99,102,241,0.15)' : 'var(--bg-card)',
+                background: filter === f.id ? 'rgba(0,113,227,0.12)' : '#ffffff',
                 color: filter === f.id ? 'var(--accent)' : 'var(--text-secondary)',
                 cursor: 'pointer'
               }}>

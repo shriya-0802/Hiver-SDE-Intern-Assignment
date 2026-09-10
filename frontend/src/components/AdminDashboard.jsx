@@ -197,13 +197,13 @@ export default function AdminDashboard({ onTicketUpdate }) {
                           onChange={e => setModifiedText(e.target.value)}
                           style={{
                             width: '100%',
-                            background: 'var(--bg-primary)',
+                            background: '#ffffff',
                             color: 'var(--text-primary)',
                             border: '1px solid var(--accent)',
                             borderRadius: 'var(--radius-sm)',
                             padding: 12,
                             fontSize: 13,
-                            fontFamily: 'Inter, sans-serif'
+                            fontFamily: 'inherit'
                           }}
                         />
                         <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
@@ -216,7 +216,7 @@ export default function AdminDashboard({ onTicketUpdate }) {
                         </div>
                       </div>
                     ) : (
-                      <div style={{ background: 'rgba(99,102,241,0.06)', border: '1px dashed var(--accent)', borderRadius: 'var(--radius-sm)', padding: '12px 16px', fontSize: 13, lineHeight: 1.6, color: 'var(--text-primary)' }}>
+                      <div style={{ background: 'rgba(0,113,227,0.06)', border: '1px dashed var(--accent)', borderRadius: 'var(--radius-sm)', padding: '12px 16px', fontSize: 13, lineHeight: 1.6, color: 'var(--text-primary)' }}>
                         "{t.aiProposedDraft}"
                       </div>
                     )}
@@ -230,7 +230,7 @@ export default function AdminDashboard({ onTicketUpdate }) {
                           setEditingTicketId(t.id);
                           setModifiedText(t.aiProposedDraft);
                         }}
-                        style={{ padding: '8px 14px', background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border)', color: 'var(--text-primary)', borderRadius: 'var(--radius-sm)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+                        style={{ padding: '8px 14px', background: '#ffffff', border: '1px solid var(--border)', color: 'var(--text-primary)', borderRadius: 'var(--radius-sm)', fontSize: 12, fontWeight: 600, cursor: 'pointer', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
                         ✏️ Edit Draft
                       </button>
 
