@@ -120,8 +120,8 @@ def build_pdf():
     story = []
 
     # Title Banner
-    story.append(Paragraph(" Apple AI Support Agent (`@AppleSupport`)", title_style))
-    story.append(Paragraph("<b>Hiver SDE Intern Take-Home Assignment Submission & Full Technical Report</b><br/>An end-to-end AI customer support system featuring Intent Classification, RAG-Grounded Generation, a 4-Tier Escalation Engine, and LLM-as-Judge Validation.", subtitle_style))
+    story.append(Paragraph("Apple Customer Support Assistant", title_style))
+    story.append(Paragraph("<b>Hiver SDE Intern Take-Home Assignment Technical Report</b><br/>Author: Shriya Mohanty | Repository: https://github.com/shriya-0802/Hiver-SDE-Intern-Assignment.git", subtitle_style))
     story.append(HRFlowable(width="100%", thickness=1.5, color=PRIMARY, spaceAfter=12))
 
     # Read README.md
@@ -274,7 +274,7 @@ def build_pdf():
         canvas.saveState()
         canvas.setFont('Helvetica', 8)
         canvas.setFillColor(MUTED_TEXT)
-        canvas.drawString(40, 20, "Apple AI Support Agent — Hiver SDE Intern Assignment Report")
+        canvas.drawString(40, 20, "Apple Customer Support Assistant — Hiver SDE Intern Assignment Report")
         canvas.drawRightString(572, 20, f"Page {doc.page}")
         canvas.restoreState()
 
