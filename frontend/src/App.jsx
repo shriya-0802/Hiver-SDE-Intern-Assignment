@@ -64,7 +64,7 @@ export default function App() {
       {/* Header */}
       <header className="header">
         <div className="header-brand">
-          <div className="header-logo">🍎</div>
+          <div className="header-logo">📱</div>
           <div>
             <div className="header-title">Apple AI Support Agent</div>
             <div className="header-subtitle">
@@ -143,20 +143,6 @@ export default function App() {
         {activeTab === 'eval' && <EvalPanel />}
         {activeTab === 'arch' && <AgentDashboard />}
       </main>
-
-      {/* Footer */}
-      <footer style={{
-        padding: '12px 32px',
-        borderTop: '1px solid var(--border)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        fontSize: 12,
-        color: 'var(--text-muted)',
-      }}>
-        <span>Apple AI Support Agent · Role: {currentUser.role.toUpperCase()} · Logged in as {currentUser.handle}</span>
-        <span>Hiver SDE Intern Assignment · Built with Gemini + Express + React</span>
-      </footer>
     </div>
   );
 }

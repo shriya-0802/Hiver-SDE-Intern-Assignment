@@ -192,7 +192,7 @@ export default function ChatDemo() {
       {/* Chat Column */}
       <div className="chat-panel card" style={{ flex:'1 1 480px', display:'flex', flexDirection:'column' }}>
         <div className="agent-header">
-          <div className="agent-avatar">🍎</div>
+          <div className="agent-avatar">📱</div>
           <div>
             <div className="agent-name">Apple Support AI</div>
             <div className="agent-desc">Powered by Gemini + RAG · 7 Intent Classes</div>
@@ -219,7 +219,7 @@ export default function ChatDemo() {
           {messages.map(m => (
             <div key={m.id} className={`message ${m.role}`}>
               <div className={`avatar ${m.role === 'user' ? 'user-avatar' : 'bot-avatar'}`}>
-                {m.role === 'user' ? '👤' : '🍎'}
+                {m.role === 'user' ? '👤' : '📱'}
               </div>
               <div>
                 <div className="message-bubble">{m.text}</div>
@@ -239,7 +239,7 @@ export default function ChatDemo() {
           ))}
           {loading && (
             <div className="message bot">
-              <div className="avatar bot-avatar">🍎</div>
+              <div className="avatar bot-avatar">📱</div>
               <div className="message-bubble">
                 <div className="typing-indicator">
                   <div className="typing-dots">

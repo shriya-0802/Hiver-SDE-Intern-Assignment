@@ -64,7 +64,7 @@ export default function LoginPage({ onLogin }) {
       }}>
         {/* Brand Header */}
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
-          <div style={{ fontSize: 48, marginBottom: 8, filter: 'drop-shadow(0 4px 12px rgba(255,255,255,0.2))' }}>🍎</div>
+          <div style={{ fontSize: 48, marginBottom: 8, filter: 'drop-shadow(0 4px 12px rgba(0,113,227,0.4))' }}>📱</div>
           <h2 style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-0.5px' }}>
             <span className="glow-text">Apple AI Support Portal</span>
           </h2>
