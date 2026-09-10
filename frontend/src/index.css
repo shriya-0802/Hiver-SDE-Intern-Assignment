@@ -4,17 +4,17 @@
 
 :root {
   --bg-primary: #000000;
-  --bg-secondary: #1c1c1e;
+  --bg-secondary: #161617;
   --bg-card: #1c1c1e;
   --bg-card-hover: #2c2c2e;
-  --border: rgba(255,255,255,0.08);
-  --border-glow: rgba(0,113,227,0.4);
+  --border: rgba(255,255,255,0.09);
+  --border-glow: rgba(0,113,227,0.45);
   --text-primary: #f5f5f7;
   --text-secondary: #86868b;
   --text-muted: #6e6e73;
   --accent: #0071e3;
-  --accent-glow: rgba(0,113,227,0.18);
-  --accent2: #5e5ce6;
+  --accent-glow: rgba(0,113,227,0.2);
+  --accent2: #2997ff;
   --green: #30d158;
   --yellow: #ffd60a;
   --orange: #ff9f0a;
@@ -22,47 +22,47 @@
   --purple: #bf5af2;
   --radius-sm: 8px;
   --radius: 14px;
-  --radius-lg: 20px;
-  --shadow: 0 8px 32px rgba(0,0,0,0.6);
-  --shadow-glow: 0 0 30px rgba(0,113,227,0.2);
+  --radius-lg: 18px;
+  --shadow: 0 10px 30px rgba(0,0,0,0.6);
+  --shadow-glow: 0 0 35px rgba(0,113,227,0.25);
 }
 
 html, body { height: 100%; }
 
 body {
-  font-family: 'Inter', -apple-system, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Inter', sans-serif;
   background: var(--bg-primary);
   color: var(--text-primary);
-  line-height: 1.6;
+  line-height: 1.5;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 #root { height: 100%; }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-secondary); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-/* Layout */
+/* Layout - Official Apple.com Dark Theme Background */
 .app {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: radial-gradient(ellipse at 20% 50%, rgba(99,102,241,0.05) 0%, transparent 60%),
-              radial-gradient(ellipse at 80% 20%, rgba(6,182,212,0.04) 0%, transparent 50%),
-              var(--bg-primary);
+  background: radial-gradient(circle at 50% -10%, rgba(0, 113, 227, 0.15) 0%, rgba(22, 22, 23, 0.7) 45%, #000000 100%), #000000;
 }
 
-/* Header */
+/* Header - Apple Glassmorphism */
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 32px;
-  background: rgba(16,16,24,0.8);
-  backdrop-filter: blur(20px);
+  padding: 14px 32px;
+  background: rgba(22, 22, 23, 0.8);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
@@ -76,37 +76,38 @@ body {
 .header-logo {
   width: 36px;
   height: 36px;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  background: #0071e3;
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
+  box-shadow: 0 4px 12px rgba(0,113,227,0.3);
 }
-.header-title { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+.header-title { font-size: 17px; font-weight: 600; letter-spacing: -0.4px; color: #f5f5f7; }
 .header-subtitle { font-size: 12px; color: var(--text-secondary); }
 .header-nav {
   display: flex;
   gap: 4px;
-  background: var(--bg-card);
-  padding: 4px;
-  border-radius: var(--radius);
+  background: rgba(255,255,255,0.05);
+  padding: 3px;
+  border-radius: 20px;
   border: 1px solid var(--border);
 }
 .nav-btn {
-  padding: 8px 16px;
+  padding: 7px 16px;
   border: none;
   background: transparent;
   color: var(--text-secondary);
-  border-radius: var(--radius-sm);
+  border-radius: 16px;
   cursor: pointer;
   font-size: 13px;
   font-weight: 500;
   transition: all 0.2s ease;
-  font-family: 'Inter', sans-serif;
+  font-family: inherit;
 }
-.nav-btn:hover { color: var(--text-primary); background: var(--bg-card-hover); }
-.nav-btn.active { background: var(--accent); color: white; }
+.nav-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.08); }
+.nav-btn.active { background: #0071e3; color: #ffffff; font-weight: 600; box-shadow: 0 2px 8px rgba(0,113,227,0.4); }
 .status-pill {
   display: flex;
   align-items: center;
@@ -124,15 +125,16 @@ body {
 /* Main content */
 .main { flex: 1; display: flex; padding: 24px 32px; gap: 24px; max-width: 1600px; margin: 0 auto; width: 100%; }
 
-/* Cards */
+/* Cards - Apple HIG Cards */
 .card {
-  background: var(--bg-card);
+  background: #1c1c1e;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 24px;
-  transition: all 0.3s ease;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.card:hover { border-color: var(--border-glow); box-shadow: var(--shadow-glow); }
+.card:hover { border-color: rgba(0,113,227,0.4); box-shadow: 0 12px 32px rgba(0,0,0,0.6); }
 .card-header {
   display: flex;
   align-items: center;
