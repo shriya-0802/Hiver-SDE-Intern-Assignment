@@ -25,12 +25,25 @@ npm run dev
 ```
 Open **`http://localhost:5173`** in your browser.
 
-#### Terminal 3 (Optional): Run CLI Evaluation Harness
-```bash
-cd data_pipeline
-python -m pip install -r requirements.txt
-python 03_run_eval.py
-```
+### 🌐 Deploy on Render (1-Click Blueprint or Web Service)
+
+This repository includes a pre-configured `render.yaml` blueprint and root `package.json` for 1-click deployment on Render:
+
+1. Push this repository to your GitHub account.
+2. Log into [Render Dashboard](https://dashboard.render.com/) and click **New +** -> **Blueprint**.
+3. Connect your repository (`shriya-0802/Hiver-SDE-Intern-Assignment`).
+4. Set your environment variable:
+   * `GEMINI_API_KEY`: Your Google Gemini API Key
+5. Click **Apply**. Render will automatically run `npm run build` and launch the unified Express + React web application!
+
+#### Manual Render Web Service Settings (If not using Blueprint):
+* **Environment**: `Node`
+* **Build Command**: `npm run build`
+* **Start Command**: `npm start`
+* **Environment Variables**:
+  * `GEMINI_API_KEY`: `<your-gemini-api-key>`
+  * `NODE_ENV`: `production`
+  * `PORT`: `3001`
 
 ---
 

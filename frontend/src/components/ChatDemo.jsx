@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 
-const API = 'http://localhost:3001';
+const API = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : '');
 
 const INTENTS = {
   SOFTWARE_BUG: { color: '#8b5cf6', icon: '🐛' },
